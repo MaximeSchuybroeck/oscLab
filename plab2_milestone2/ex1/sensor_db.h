@@ -1,5 +1,6 @@
 /**
  * \author Bert Lagaisse
+ * \author Maxime Schuybroeck
  */
 
 #ifndef _SENSOR_DB_H_
