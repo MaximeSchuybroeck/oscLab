@@ -7,6 +7,8 @@
 #include "sbuffer.h"
 #include <pthread.h>            // toegevoegd voor support
 
+
+pthread_mutex_t thread_mutex;
 /**
  * basic node for the buffer, these nodes are linked together to create the buffer
  */
@@ -25,7 +27,6 @@ struct sbuffer {
 };
 
 int sbuffer_init(sbuffer_t **buffer) {
-    lock
     *buffer = malloc(sizeof(sbuffer_t));
     if (*buffer == NULL) return SBUFFER_FAILURE;
     (*buffer)->head = NULL;
@@ -51,9 +52,9 @@ int sbuffer_free(sbuffer_t **buffer) {
 int sbuffer_remove(sbuffer_t *buffer, sensor_data_t *data) {
     sbuffer_node_t *dummy;
     if (buffer == NULL) return SBUFFER_FAILURE;
-    pthread_mutex_lock(&buffer->lock);  // toegevoegd --> locks the mutex
+    pthread_mutex_lock(&thread_mutex);
     if (buffer->head == NULL) {
-        pthread_mutex_unlock(&buffer->lock); // toegevoegd --> unlocks the mutex voor de return
+        pthread_mutex_unlock(&thread_mutex);
         return SBUFFER_NO_DATA;
     }
     *data = buffer->head->data;
@@ -66,7 +67,7 @@ int sbuffer_remove(sbuffer_t *buffer, sensor_data_t *data) {
         buffer->head = buffer->head->next;
     }
     free(dummy);
-    pthread_mutex_unlock(&buffer->lock); //toegevoegd --> unlocks the mutex voor de return
+    pthread_mutex_unlock(&thread_mutex);
     return SBUFFER_SUCCESS;
 }
 
@@ -75,7 +76,7 @@ int sbuffer_insert(sbuffer_t *buffer, sensor_data_t *data) {
     if (buffer == NULL) return SBUFFER_FAILURE;
     dummy = malloc(sizeof(sbuffer_node_t));
     if (dummy == NULL) return SBUFFER_FAILURE;
-    pthread_mutex_lock(&buffer->lock);  // toegevoegd --> locks the mutex
+    pthread_mutex_lock(&thread_mutex);
     dummy->data = *data;
     dummy->next = NULL;
     if (buffer->tail == NULL) // buffer empty (buffer->head should also be NULL
@@ -86,6 +87,6 @@ int sbuffer_insert(sbuffer_t *buffer, sensor_data_t *data) {
         buffer->tail->next = dummy;
         buffer->tail = buffer->tail->next;
     }
-    pthread_mutex_unlock(&buffer->lock);  //toegevoegd --> unlocks the mutex voor de return
+    pthread_mutex_unlock(&thread_mutex);
     return SBUFFER_SUCCESS;
 }

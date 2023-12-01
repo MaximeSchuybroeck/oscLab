@@ -2,46 +2,29 @@
  * \author Maxime Schuybroeck
  */
 
-#include "threads.h"
 #include "sbuffer.h"
 #include <pthread.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <unistd.h>  // usleep
 #include <string.h>
-#include <errno.h>
+
 
 // local variables
 sbuffer_t *buffer;
 FILE* sensor_data;
 FILE* csv_file;
-pthread_mutex_t myMutex;
 
 
-void* writer_thread(void *arg) {
-    buffer = (sbuffer_t *)arg;  // Cast the argument back to sbuffer_t*
-
+void* writer_thread() {
     // reading sensor data from the file
     sensor_data_t data;     // to save the data in
     while(fread(&data, sizeof(sensor_data_t), 1, sensor_data) == 1){   // == 1 if reading is still possible
-        // locking the mutex before accessing
-        /*
-        if (pthread_mutex_lock(&buffer->mutex) != 0) {
-            fprintf(stderr, "Error locking mutex in the writer_thread\n");
-            break;
-        }
-         */
+
         // inserting data in buffer
         if(sbuffer_insert(buffer, &data) != SBUFFER_SUCCESS){
             fprintf(stderr,"Error inserting the data into the buffer\n");
-
-            // unlocking the mutex before breaking
-            //pthread_mutex_unlock(&buffer->mutex);
             break;
         }
-
-        // unlock the mutex after inserting the data
-        //pthread_mutex_unlock(&buffer->mutex);
 
         // waiting or sleeping for 10 milliseconds
         usleep(10000);
@@ -56,22 +39,16 @@ void* writer_thread(void *arg) {
     return NULL;
 }
 
-void* reader_thread(void *arg) {
-    //
-    buffer = (sbuffer_t *)arg;  // Cast the argument back to sbuffer_t*
-
+void* reader_thread() {
     // reading data from buffer via the sbuffer_remove()
     while(1){
         sensor_data_t data;     // to save the data in
         if(sbuffer_remove(buffer, &data) != SBUFFER_SUCCESS){
-            fprintf(stderr, "Error in removing data from the buffer or end-of-stream marker was encountered\n");
             break; // while loop stops if end or error is hit
         }
 
         // writing to the CSV file
-        pthread_mutex_lock(&(&buffer).lock);
-        fprintf(csv_file, "%u, %.2f, %ld\n", data.id, data.value, (long)data.ts);
-        pthread_mutex_unlock((&&buffer)->lock);
+        fprintf(csv_file, "%u, %lf, %li\n", data.id, data.value, data.ts);
 
         // Waiting or sleeping for 25 milliseconds
         usleep(25000);
@@ -127,10 +104,6 @@ int main() {
         fprintf(stderr, "Error initialising the buffer\n");
         return -1;
     }
-
-    // initialising the mutex
-    pthread_mutex_t myMutex;
-
 
     // starting the threads
     if(start_threads() != 0) {
