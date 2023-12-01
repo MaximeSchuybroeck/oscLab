@@ -25,6 +25,7 @@ struct sbuffer {
 };
 
 int sbuffer_init(sbuffer_t **buffer) {
+    lock
     *buffer = malloc(sizeof(sbuffer_t));
     if (*buffer == NULL) return SBUFFER_FAILURE;
     (*buffer)->head = NULL;
