@@ -5,13 +5,13 @@
 #include "logger.h"
 #include <stdio.h>
 #include <unistd.h>
-#include <sys/types.h>
-#include <sys/wait.h>
 #include <time.h>
 #include <string.h>
 
+
 int log_pipe[2];
 FILE *log_file;
+int sequence_num = 0;
 
 // log_pipe[0] = reading
 // log_pipe[1] = writing
@@ -45,12 +45,17 @@ int create_log_process(){
         }
 
         //local variables
-        int buffer[50];
+        int buffer[256];
         ssize_t result_bytes;
 
-        // reading and directly writing to the log log_file
         while((result_bytes = read(log_pipe[0], buffer, sizeof(buffer)))){
+            time_t current_time;
+            time(&current_time);
+            char *date = ctime(&current_time);
+            date[strlen(date) - 1] = '\0';
+            fprintf(log_file, "%d - %s - ", sequence_num, date);
             fwrite(buffer,1,result_bytes,log_file);
+            sequence_num++;
         }
 
 
