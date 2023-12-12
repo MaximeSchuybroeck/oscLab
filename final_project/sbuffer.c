@@ -71,6 +71,29 @@ int sbuffer_remove(sbuffer_t *buffer, sensor_data_t *data) {
     return SBUFFER_SUCCESS;
 }
 
+int sbuffer_read(sbuffer_t *buffer, sensor_data_t *data) {
+    //TODO: nog aanpassen
+    sbuffer_node_t *dummy;
+    if (buffer == NULL) return SBUFFER_FAILURE;
+    pthread_mutex_lock(&thread_mutex);
+    if (buffer->head == NULL) {
+        pthread_mutex_unlock(&thread_mutex);
+        return SBUFFER_NO_DATA;
+    }
+    *data = buffer->head->data;
+    dummy = buffer->head;
+    if (buffer->head == buffer->tail) // buffer has only one node
+    {
+        buffer->head = buffer->tail = NULL;
+    } else  // buffer has many nodes empty
+    {
+        buffer->head = buffer->head->next;
+    }
+    free(dummy);
+    pthread_mutex_unlock(&thread_mutex);
+    return SBUFFER_SUCCESS;
+}
+
 int sbuffer_insert(sbuffer_t *buffer, sensor_data_t *data) {
     sbuffer_node_t *dummy;
     if (buffer == NULL) return SBUFFER_FAILURE;

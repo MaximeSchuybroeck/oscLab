@@ -1,5 +1,5 @@
 /**
- * \author {AUTHOR}
+ * \author Maxime Schuybroeck
  */
 
 #ifndef _DPLIST_H_
@@ -15,6 +15,8 @@ typedef enum {
 typedef struct dplist dplist_t;
 
 typedef struct dplist_node dplist_node_t;
+
+typedef struct element element_t;
 
 /* General remark on error handling
  * All functions below will:

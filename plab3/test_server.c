@@ -7,24 +7,17 @@
 #include <inttypes.h>
 #include "config.h"
 #include "lib/tcpsock.h"
-#include "connmgr.h"
 #include <pthread.h>
-#include <sbuffer.h>
 
-// locale variable
-sbuffer_t buffer;
-
+/**
+ * Implements a sequential test server (only one connection at the same time)
+ */
 
 void *thread_runner(void *arg){
     tcpsock_t *client = (tcpsock_t *) arg;
     sensor_data_t data;
     int bytes, result;
-    //////////////////////// actual data upload gedeelte
     do {
-        /////////// desnoods onderste 2 lijnen weg doen en de rest uncommenten --> werkt zwz (dit is het effecteive data verzamellen dat los staat van de if hieronder
-        bytes = sizeof(data);
-        result = tcp_receive(client, (void *) &data, &bytes);
-        /*
         // read sensor ID
         bytes = sizeof(data.id);
         result = tcp_receive(client, (void *) &data.id, &bytes);
@@ -34,16 +27,10 @@ void *thread_runner(void *arg){
         // read timestamp
         bytes = sizeof(data.ts);
         result = tcp_receive(client, (void *) &data.ts, &bytes);
-         */
         if ((result == TCP_NO_ERROR) && bytes) {
-            /////// TODO: een manier vinden om de buffer op te vragen uit de main file
-            if(sbuffer_insert(&buffer, &data) != SBUFFER_SUCCESS){
-                fprintf(stderr, "Error in inserting the end-of-stream marker into the buffer\n");
-            }
             printf("sensor id = %" PRIu16 " - temperature = %g - timestamp = %ld\n", data.id, data.value,
                     (long int) data.ts);
         }
-        //////////////////////// actual data upload gedeelte
     } while (result == TCP_NO_ERROR);
     if (result == TCP_CONNECTION_CLOSED)
         printf("Peer has closed connection\n");
@@ -54,13 +41,12 @@ void *thread_runner(void *arg){
 }
 
 
-int start_connmgr(int argc, char *argv[], sbuffer_t* given_buffer) {
+int main(int argc, char *argv[]) {
     tcpsock_t *server, *client;
     sensor_data_t data;
     int bytes, result;
     int conn_counter = 0;
-    buffer = given_buffer;
-
+    
     if(argc < 3) {
     	printf("Please provide the right arguments: first the port, then the max nb of clients");
     	return -1;

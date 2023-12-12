@@ -7,6 +7,13 @@
 #include <stdio.h>
 #include <unistd.h>  // usleep
 #include <string.h>
+#include "datamgr.h"
+#include "lib/dplist.h"
+#include "lib/dplist.c"
+#include <stdbool.h>
+
+
+
 
 
 // local variables
@@ -14,8 +21,11 @@ sbuffer_t *buffer;
 FILE* sensor_data;
 FILE* csv_file;
 
+sbuffer_t* get_buffer(){
+    return *buffer;
+}
 
-void* writer_thread() {
+void* connection_manager_thread() {
     // reading sensor data from the file
     sensor_data_t data;     // to save the data in
     while(fread(&data, sizeof(sensor_data_t), 1, sensor_data) == 1){   // == 1 if reading is still possible
@@ -39,7 +49,48 @@ void* writer_thread() {
     return NULL;
 }
 
-void* reader_thread() {
+void* data_manager_thread() {
+    // setting up the data manager
+    FILE fp_sensor_map = fopen(room_sensor.map, 'r');
+    datamgr_parse_sensor_files(fp_sensor_map);
+    dplist_t *list = get_dplist();
+    dplist_node_t *current_node = list->head;
+
+    // reading data from buffer via the sbuffer_read() function
+
+    bool node_was_found;
+    while(1){
+        sensor_data_t data;     // to save the data in
+        if(sbuffer_remove(buffer, &data) != SBUFFER_SUCCESS){
+            break; // while loop stops if end or error is hit
+        }
+
+        // updating the dplist
+        node_was_found = false;
+        while(current_node != NULL){
+            if(current_node->element->sensorId == data.id){
+                current_node->element->ts = data.ts;
+                current_node->element->average = (current_node->element->average + data.value)/2;
+                node_was_found = true;
+                break;
+            }
+            current_node = current_node->next;
+        }
+
+        // checking if the node was found
+        if(!node_was_found){
+            fprintf(stderr, "Error, sensor was not found in de dplist\n")
+        }
+
+        // Waiting or sleeping for 25 milliseconds
+        usleep(25000);
+        ////TODO: usleep time checken wat die effectief moet zijn
+    }
+
+    return NULL;
+}
+
+void* storage_manager_thread() {
     // reading data from buffer via the sbuffer_remove()
     while(1){
         sensor_data_t data;     // to save the data in
@@ -74,19 +125,19 @@ int start_threads(){
         return -1;
     }
 
-    pthread_t writer, reader1, reader2;
+    pthread_t connmgr, datamgr, storemgr;
 
     // creating the threads
-    if(pthread_create(&writer, NULL, writer_thread, (void *)buffer) != 0 ||
-       pthread_create(&reader1, NULL, reader_thread, (void *)buffer) != 0 ||
-       pthread_create(&reader2, NULL, reader_thread, (void *)buffer) != 0) {
+    if(pthread_create(&connmgr, NULL, connection_manager_thread, (void *)buffer) != 0 ||
+       pthread_create(&datamgr, NULL, data_manager_thread, (void *)buffer) != 0 ||
+       pthread_create(&storemgr, NULL, storage_manager_thread, (void *)buffer) != 0) {
         return -1;  // if != 0 --> error --> -1
     }
 
     // joining the treads
-    pthread_join(writer, NULL);
-    pthread_join(reader1, NULL);
-    pthread_join(reader2, NULL);
+    pthread_join(connmgr, NULL);
+    pthread_join(datamgr, NULL);
+    pthread_join(storemgr, NULL);
 
     // closing the file
     fclose(sensor_data);

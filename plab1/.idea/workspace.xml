@@ -20,16 +20,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="d8dcc99b-f363-468f-a889-8bd4dc498df8" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/Testing/Temporary/LastTest.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../plab2_milestone2/milestone2/gateway.log" beforeDir="false" afterPath="$PROJECT_DIR$/../plab2_milestone2/milestone2/gateway.log" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../plab2_milestone2/milestone2/logger.c" beforeDir="false" afterPath="$PROJECT_DIR$/../plab2_milestone2/milestone2/logger.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../plab2_milestone2/milestone2/sensor_db.c" beforeDir="false" afterPath="$PROJECT_DIR$/../plab2_milestone2/milestone2/sensor_db.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../plab2_milestone2/milestone2/sensor_db.csv" beforeDir="false" afterPath="$PROJECT_DIR$/../plab2_milestone2/milestone2/sensor_db.csv" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../plab2_milestone2/milestone2/test" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../plab2_milestone2/milestone2/test.c" beforeDir="false" />
-    </list>
+    <list default="true" id="d8dcc99b-f363-468f-a889-8bd4dc498df8" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -55,24 +46,24 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
-    &quot;cf.first.check.clang-format&quot;: &quot;false&quot;,
-    &quot;cidr.known.project.marker&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/maxime/osc/plab1&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "git-widget-placeholder": "main",
+    "last_opened_file_path": "/home/maxime/esp/esp-idf/examples/get-started/hello_world",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected="Makefile Target.gen">
     <configuration name="plab1" type="CMakeRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="plab1" TARGET_NAME="plab1" CONFIG_NAME="Debug" RUN_TARGET_PROJECT_NAME="plab1" RUN_TARGET_NAME="plab1">
       <method v="2">
@@ -104,7 +95,7 @@
       <workItem from="1700054426090" duration="11000" />
       <workItem from="1701270606133" duration="312000" />
       <workItem from="1701879017645" duration="4706000" />
-      <workItem from="1701941444139" duration="589000" />
+      <workItem from="1701941444139" duration="1220000" />
     </task>
     <servers />
   </component>

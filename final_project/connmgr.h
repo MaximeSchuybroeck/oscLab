@@ -20,6 +20,6 @@ void *thread_runner(void *arg);
  * @param argv
  * @return
  */
-int main(int argc, char *argv[]);
+int start_connmgr(int argc, char *argv[]);
 
 #endif  //_CONNMGR_H_
