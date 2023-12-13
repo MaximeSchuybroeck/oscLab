@@ -5,15 +5,11 @@
 #include "sbuffer.h"
 #include <pthread.h>
 #include <stdio.h>
-#include <unistd.h>  // usleep
 #include <string.h>
 #include "datamgr.h"
 #include "lib/dplist.h"
 #include "lib/dplist.c"
 #include <stdbool.h>
-
-
-
 
 
 // local variables
@@ -35,9 +31,6 @@ void* connection_manager_thread() {
             fprintf(stderr,"Error inserting the data into the buffer\n");
             break;
         }
-
-        // waiting or sleeping for 10 milliseconds
-        usleep(10000);
     }
 
     // adding the end-of-stream marker to the buffer
@@ -57,11 +50,10 @@ void* data_manager_thread() {
     dplist_node_t *current_node = list->head;
 
     // reading data from buffer via the sbuffer_read() function
-
     bool node_was_found;
     while(1){
         sensor_data_t data;     // to save the data in
-        if(sbuffer_remove(buffer, &data) != SBUFFER_SUCCESS){
+        if(sbuffer_read(buffer, &data) != SBUFFER_SUCCESS){
             break; // while loop stops if end or error is hit
         }
 
@@ -81,12 +73,7 @@ void* data_manager_thread() {
         if(!node_was_found){
             fprintf(stderr, "Error, sensor was not found in de dplist\n")
         }
-
-        // Waiting or sleeping for 25 milliseconds
-        usleep(25000);
-        ////TODO: usleep time checken wat die effectief moet zijn
     }
-
     return NULL;
 }
 
@@ -100,9 +87,6 @@ void* storage_manager_thread() {
 
         // writing to the CSV file
         fprintf(csv_file, "%u, %lf, %li\n", data.id, data.value, data.ts);
-
-        // Waiting or sleeping for 25 milliseconds
-        usleep(25000);
     }
 
     return NULL;

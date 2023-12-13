@@ -1,9 +1,7 @@
+/**
+ * \author Maxime Schuybroeck
+ */
 
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <assert.h>
-#include "dplist.h"
 #include "config.h"
 
 
@@ -14,6 +12,7 @@ struct element {
     sensor_id_t *sensorId;
     room_id_t *roomId;
     sensor_value_t *average;
+    dplist_t previousValues;
     sensor_ts_t ts;
 };
 

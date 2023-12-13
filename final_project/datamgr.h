@@ -45,6 +45,13 @@ void datamgr_parse_sensor_files(FILE *fp_sensor_map, FILE *fp_sensor_data);
 dplist_t *get_dplist();
 
 /**
+ * This method adds a value to the preious sensor value list and deletes the last element in the list
+ * @param valueList A dplist with the the previous sensor values
+ * @param value The sensor value that needs to be added
+ */
+void add_sensor_value(dplist_t valueList, sensor_data_t value);
+
+/**
  * This method should be called to clean up the datamgr, and to free all used memory. 
  * After this, any call to datamgr_get_room_id, datamgr_get_avg, datamgr_get_last_modified or datamgr_get_total_sensors will not return a valid result
  */

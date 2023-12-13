@@ -2,15 +2,12 @@
  * \author Maxime Schuybroeck
  */
 
-#include "sensor_db.h"
-#include "logger.h"
-#include <stdio.h>
-#include <unistd.h>
+#include "config.h"
+
 
 // variables
 FILE *db;
 
-// function declaration
 
 FILE * open_db(char * filename, bool append){
     db = fopen(filename, append ? "a" : "w");
