@@ -85,9 +85,11 @@ int main(int argc, char *argv[]) {
     }
 
     // starting the connection manager
+    /*
     struct connmgr_parameters parameters;
     parameters.server_arguments = argv;
     parameters.buffer = buffer;
+     */
 
     // setting up the data manager
     FILE fp_sensor_map = fopen(room_sensor.map, 'r');
@@ -100,7 +102,8 @@ int main(int argc, char *argv[]) {
 
     // creating the threads
     pthread_t tid[3];
-    pthread_create(&tid[0], NULL,start_connmgr, (void *) &parameters);
+    pthread_create(&tid[0], NULL,start_connmgr, (void *) argv);
+    //pthread_create(&tid[0], NULL,start_connmgr, (void *) &parameters);
     pthread_create(&tid[1], NULL, data_manager_thread, NULL);
     pthread_create(&tid[2], NULL, storage_manager_thread, NULL);
 

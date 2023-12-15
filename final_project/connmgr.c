@@ -15,7 +15,7 @@
 
 
 // locale variable
-sbuffer_t buffer;
+extern sbuffer_t *buffer;
 
 
 void *thread_runner(void *arg){
@@ -45,13 +45,17 @@ void *thread_runner(void *arg){
 }
 
 
-void *start_connmgr(void *arguments) {
+void *start_connmgr(void *argv[]) {
     // processing method arguments
+    /*
     connmgr_parameters params = (connmgr_parameters *) arguments;
     char **argv[3] = params->server_arguments;
     sbuffer_t *buffer = params->buffer;
     int MAX_CONN = atoi(argv[2]);
     int PORT = atoi(argv[1]);
+     */
+    int MAX_CONN = atoi((char *)argv[2]);
+    int PORT = atoi((char *)argv[1]);
 
     //TODO: array gaat ni werken dus iets anders vinden
     pthread_t tid[MAX_CONN];

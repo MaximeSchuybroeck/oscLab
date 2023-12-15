@@ -11,6 +11,7 @@
 #define SBUFFER_SUCCESS 0
 #define SBUFFER_NO_DATA 1
 
+typedef struct sbuffer sbuffer_t;
 
 /**
  * Allocates and initializes a new shared buffer
