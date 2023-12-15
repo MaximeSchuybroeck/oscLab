@@ -9,17 +9,6 @@
 #include <stdio.h>
 #include "config.h"
 
-#ifndef RUN_AVG_LENGTH
-#define RUN_AVG_LENGTH 5
-#endif
-
-#ifndef SET_MAX_TEMP
-#error SET_MAX_TEMP not set
-#endif
-
-#ifndef SET_MIN_TEMP
-#error SET_MIN_TEMP not set
-#endif
 
 /*
  * Use ERROR_HANDLER() for handling memory allocation problems, invalid sensor IDs, non-existing files, etc.
@@ -37,19 +26,27 @@
  *  \param fp_sensor_map file pointer to the map file
  *  \param fp_sensor_data file pointer to the binary data file
  */
-void datamgr_parse_sensor_files(FILE *fp_sensor_map, FILE *fp_sensor_data);
+void datamgr_parse_room_sensor_map(FILE *fp_sensor_map);
+
+/**
+ * This method adds a value to the preious sensor value array and deletes the last added element in the array
+ * @param valueList the array with the previous values
+ * @param value the value that need to be added to the list
+ */
+void add_sensor_value(double *valueList[RUN_AVG_LENGTH], sensor_data_t value);
+
+/**
+ * This method calculates the average of the values inside of the array
+ * @param valueList the array with the previous values
+ * @return the average
+ */
+sensor_value_t calculate_avg(double valueList[RUN_AVG_LENGTH]);
+
 
 /**
  * @return the address of the dplist with the room_id & sensor_id
  */
 dplist_t *get_dplist();
-
-/**
- * This method adds a value to the preious sensor value list and deletes the last element in the list
- * @param valueList A dplist with the the previous sensor values
- * @param value The sensor value that needs to be added
- */
-void add_sensor_value(dplist_t valueList, sensor_data_t value);
 
 /**
  * This method should be called to clean up the datamgr, and to free all used memory. 

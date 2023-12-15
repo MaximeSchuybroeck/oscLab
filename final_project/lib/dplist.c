@@ -2,7 +2,11 @@
  * \author Maxime Schuybroeck
  */
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 #include "config.h"
+#include "dplist.h"
 
 
 /*
@@ -12,7 +16,7 @@ struct element {
     sensor_id_t *sensorId;
     room_id_t *roomId;
     sensor_value_t *average;
-    dplist_t previousValues;
+    double previousValues[RUN_AVG_LENGTH];
     sensor_ts_t ts;
 };
 

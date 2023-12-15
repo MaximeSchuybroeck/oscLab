@@ -2,7 +2,11 @@
  * \author Maxime Schuybroeck
  */
 
+#include <stdio.h>
+#include <stdbool.h>
+#include "logger.h"
 #include "config.h"
+#include "sensor_db.h"
 
 
 // variables

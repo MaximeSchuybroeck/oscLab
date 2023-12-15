@@ -3,9 +3,15 @@
  */
 
 #include "config.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include "sbuffer.h"
+#include <pthread.h>
+#include <stdbool.h>
 
 
 pthread_mutex_t thread_mutex;
+
 /**
  * basic node for the buffer, these nodes are linked together to create the buffer
  */
@@ -20,7 +26,7 @@ typedef struct sbuffer_node {
 struct sbuffer {
     sbuffer_node_t *head;       /**< a pointer to the first node in the buffer */
     sbuffer_node_t *tail;       /**< a pointer to the last node in the buffer */
-    pthread_mutex_t lock;       // toegevoegd voor safety
+    pthread_mutex_t lock;
 };
 
 int sbuffer_init(sbuffer_t **buffer) {
@@ -54,14 +60,16 @@ int sbuffer_remove(sbuffer_t *buffer, sensor_data_t *data) {
         pthread_mutex_unlock(&thread_mutex);
         return SBUFFER_NO_DATA;
     }
-    *data = buffer->head->data;
-    dummy = buffer->head;
-    if (buffer->head == buffer->tail) // buffer has only one node
-    {
-        buffer->head = buffer->tail = NULL;
-    } else  // buffer has many nodes empty
-    {
-        buffer->head = buffer->head->next;
+    if(buffer->head->data.read_by_datamgr)
+        *data = buffer->head->data;
+        dummy = buffer->head;
+        if (buffer->head == buffer->tail) // buffer has only one node
+        {
+            buffer->head = buffer->tail = NULL;
+        } else  // buffer has many nodes empty
+        {
+            buffer->head = buffer->head->next;
+        }
     }
     free(dummy);
     pthread_mutex_unlock(&thread_mutex);
@@ -69,13 +77,13 @@ int sbuffer_remove(sbuffer_t *buffer, sensor_data_t *data) {
 }
 
 int sbuffer_read(sbuffer_t *buffer, sensor_data_t *data) {
-    //TODO: nog aanpassen
     if (buffer == NULL) return SBUFFER_FAILURE;
     pthread_mutex_lock(&thread_mutex);
     if (buffer->head == NULL) {
         pthread_mutex_unlock(&thread_mutex);
         return SBUFFER_NO_DATA;
     }
+    buffer->head->data.read_by_datamgr = true;
     *data = buffer->head->data;
     pthread_mutex_unlock(&thread_mutex);
     return SBUFFER_SUCCESS;

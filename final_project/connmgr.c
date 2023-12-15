@@ -3,6 +3,15 @@
  */
 
 #include "config.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <inttypes.h>
+#include "lib/tcpsock.h"
+#include "lib/dplist.h"
+#include <pthread.h>
+#include "sbuffer.h"
+#include "connmgr.h"
+
 
 
 // locale variable
@@ -11,7 +20,8 @@ sbuffer_t buffer;
 
 void *thread_runner(void *arg){
     tcpsock_t *client = (tcpsock_t *) arg;
-    sensor_data_t data;
+    sensor_data_t data = malloc(sizeof(sensor_data_t));
+
     int bytes, result;
     do {
         bytes = sizeof(data);
@@ -30,51 +40,57 @@ void *thread_runner(void *arg){
     else
         printf("Error connmgr in thread_runner: occured on connection to peer\n");
     tcp_close(&client);
+    free(data);
     pthread_exit(NULL);
 }
 
 
-int start_connmgr(int argc, char *argv[], sbuffer_t* given_buffer) {
-    tcpsock_t *server, *client;
-    sensor_data_t data;
-    int bytes, result;
-    int conn_counter = 0;
-    buffer = given_buffer;
-
-    if(argc < 3) {
-    	printf("Please provide the right arguments: first the port, then the max nb of clients");
-    	return -1;
-    }
-    
+void *start_connmgr(void *arguments) {
+    // processing method arguments
+    connmgr_parameters params = (connmgr_parameters *) arguments;
+    char **argv[3] = params->server_arguments;
+    sbuffer_t *buffer = params->buffer;
     int MAX_CONN = atoi(argv[2]);
     int PORT = atoi(argv[1]);
-    pthread_t thread_ident[MAX_CONN];
 
-    printf("Test server is started\n");
+    //TODO: array gaat ni werken dus iets anders vinden
+    pthread_t tid[MAX_CONN];
+
+    // initialising server variables
+    tcpsock_t *server, *client;
+    int bytes, result;
+    int conn_counter = 0;
+
+    // opening the TCP connection
     if (tcp_passive_open(&server, PORT) != TCP_NO_ERROR) exit(EXIT_FAILURE);
+    printf("Test server is started\n");
 
     while(conn_counter < MAX_CONN){
         if (tcp_wait_for_connection(server, &client) != TCP_NO_ERROR) exit(EXIT_FAILURE);
         printf("Incoming client connection\n");
-        conn_counter++;
 
         // creating a new thread handler for the client
-        if(pthread_create(&thread_ident[conn_counter],NULL, thread_runner, (void *)client) != 0){
+        if(pthread_create(&tid[conn_counter], NULL, thread_runner, client) != 0){
             printf("failure creating thread %u \n", conn_counter);
             exit(EXIT_FAILURE);
         }else printf("Created thread %u \n", conn_counter);
-    }
-    conn_counter = 0;
-    while(conn_counter < MAX_CONN){
         conn_counter++;
-        pthread_join(thread_ident[conn_counter], NULL);
     }
 
+    // joining the treads
+    for (int i = 0; i < MAX_CONN; i++) {
+        pthread_join(tid[i], NULL);
+    }
+
+    // closing the TCP connection
     if (tcp_close(&server) != TCP_NO_ERROR) exit(EXIT_FAILURE);
-    printf("Test server is shutting down\n");
-    return 0;
+    printf("Server is shutting down\n");
+
+    // inserting an end-of-stream marker in the buffer
+    sensor_data_t *data = (sensor_data_t *)malloc(sizeof(sensor_data_t));
+    //TODO: vragen als deze end-of-stream marker correct is gedaan --> data.id shit
+    data.id = 0;    // making an indication
+    if(sbuffer_insert(buffer, &data) != SBUFFER_SUCCESS){
+        fprintf(stderr, "Error in inserting the end-of-stream marker into the buffer\n");
+    }
 }
-
-
-
-

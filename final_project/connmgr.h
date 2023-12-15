@@ -5,6 +5,14 @@
 #ifndef _CONNMGR_H_
 #define _CONNMGR_H_
 
+#ifndef DTIMEOUT
+#define DTIMEOUT 5
+#endif
+
+#ifndef MAX_CONN
+#define MAX_CONN 3  // max number of connections the server will handle before it will stop
+#endif
+
 #include "config.h"
 
 /**
