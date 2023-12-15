@@ -21,11 +21,10 @@ FILE* csv_file;
 
 
 void* data_manager_thread() {
-
     // reading data from buffer via the sbuffer_read() function
     bool node_was_found;
     dplist_t list = get_dplist();
-    dplist_node_t
+
     while(1){
         sensor_data_t data;     // to save the data in
         if(sbuffer_read(buffer, &data) != SBUFFER_SUCCESS){
@@ -34,7 +33,9 @@ void* data_manager_thread() {
         }
 
         // updating the dplist
+        dplist_node_t *current_node = list.head;
         node_was_found = false;
+
         while(current_node != NULL){
             if(current_node->element->sensorId == data.id){
                 current_node->element->ts = data.ts;

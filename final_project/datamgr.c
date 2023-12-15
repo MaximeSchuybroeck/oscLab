@@ -10,7 +10,7 @@
 #include "datamgr.h"
 
 //TODO: dplist.c nog weg doen
-#include "lib/dplist.c"
+//#include "lib/dplist.c"
 
 // locale variable
 dplist_t list;

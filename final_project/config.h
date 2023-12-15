@@ -9,17 +9,26 @@
 #define RUN_AVG_LENGTH 5
 #endif
 
+#define SET_MIN_TEMP
+#define SET_MAX_TEMP
+
+//TODO: code wegdoen
+/*
 #ifndef SET_MAX_TEMP
-#error SET_MAX_TEMP set
+#error SET_MAX_TEMP 20
 #endif
 
 #ifndef SET_MIN_TEMP
-#error SET_MIN_TEMP not set
+#error SET_MIN_TEMP 10
 #endif
+ */
 
 #include <stdint.h>
 #include <time.h>
 #include <stdbool.h>
+
+struct sbuffer;
+typedef struct sbuffer sbuffer_t;
 
 
 typedef uint16_t sensor_id_t;
@@ -32,11 +41,11 @@ typedef struct {
     sensor_id_t id;
     sensor_value_t value;
     sensor_ts_t ts;
-    bool read_by_datamgr = false;
+    bool read_by_datamgr;
 } sensor_data_t;
 
 struct connmgr_parameters{
-    char *server_arguments[];
+    char *server_arguments[3];
     sbuffer_t buffer;
 };
 
