@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include <assert.h>
 #include "dplist.h"
+#include "../config.h"
 
 /*
  * definition of error codes
@@ -40,18 +41,19 @@
 
 struct dplist_node {
     dplist_node_t *prev, *next;
-    void *element;
+    element_t *element;
 };
 
 struct dplist {
     dplist_node_t *head;
 
-    void *(*element_copy)(void *src_element);
+    void *(*element_copy)(void **src_element);
 
     void (*element_free)(void **element);
 
     int (*element_compare)(void *x, void *y);
 };
+
 
 
 dplist_t *dpl_create(// callback functions
@@ -62,7 +64,8 @@ dplist_t *dpl_create(// callback functions
     dplist_t *list;
     list = malloc(sizeof(struct dplist));
     list->head = NULL;
-    list->element_copy = element_copy;
+    //TODO: zien of dat dit niet weg moet
+    list->element_copy = (void *(*)(void **))element_copy;
     list->element_free = element_free;
     list->element_compare = element_compare;
     return list;
@@ -76,21 +79,28 @@ void dpl_free(dplist_t **list, bool free_element) {
         free(*list);
         *list = NULL;
     } else{
+        for(int i = 0; i < dpl_size(*list); i++){
+            *list = dpl_remove_at_index(*list,i,free_element);
+        }
+        free(*list);
+        /*
         dplist_node_t *current_node = (*list)->head;
         dplist_node_t *node_to_free = current_node;
         while(current_node->next !=NULL ){
             node_to_free = current_node;
             current_node = current_node->next;
             if(free_element){
-                (*list)->element_free(&(node_to_free->element));
+                (*list)->element_free((void **)(node_to_free->element));
             }
             free(node_to_free);
         }
         free(*list);
         *list = NULL;
+         */
     }
 
 }
+
 
 dplist_t *dpl_insert_at_index(dplist_t *list, void *element, int index, bool insert_copy) {
 
@@ -140,7 +150,7 @@ dplist_t *dpl_remove_at_index(dplist_t *list, int index, bool free_element) {
             (*list).head->prev = NULL;
         }
         if(free_element){
-            (*list).element_free(&(current_node->element));
+            (*list).element_free((void **)(current_node->element));
         }
         free(current_node);
         return list;
@@ -156,7 +166,7 @@ dplist_t *dpl_remove_at_index(dplist_t *list, int index, bool free_element) {
         node_to_delete->prev->next = NULL;
     }
     if (free_element && node_to_delete->element != NULL) {
-        list->element_free(&(node_to_delete->element));
+        list->element_free((void **)(node_to_delete->element));
     }
     free(node_to_delete);
     return list;
@@ -177,8 +187,11 @@ int dpl_size(dplist_t *list) {
 }
 
 void *dpl_get_element_at_index(dplist_t *list, int index) {
-
-    return dpl_get_reference_at_index(list, index)->element;
+    if (list == NULL || list->head == NULL) {
+        return NULL;
+    } else{
+        return dpl_get_reference_at_index(list, index)->element;
+    }
 }
 
 int dpl_get_index_of_element(dplist_t *list, void *element) {

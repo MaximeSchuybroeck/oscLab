@@ -11,20 +11,17 @@
 
 
 #ifndef SET_MAX_TEMP
-#error SET_MAX_TEMP 20
+#define SET_MAX_TEMP 20
 #endif
 
 #ifndef SET_MIN_TEMP
-#error SET_MIN_TEMP 10
+#define SET_MIN_TEMP 10
 #endif
 
 #include <stdint.h>
 #include <time.h>
 #include <stdbool.h>
-/*
-struct sbuffer;
-typedef struct sbuffer sbuffer_t;
-*/
+
 
 typedef uint16_t sensor_id_t;
 typedef uint16_t room_id_t;
@@ -38,10 +35,16 @@ typedef struct {
     sensor_ts_t ts;
     bool read_by_datamgr;
 } sensor_data_t;
-/*
-struct connmgr_parameters{
-    char *server_arguments[3];
-    sbuffer_t buffer;
+
+struct element {
+    sensor_id_t sensorId;
+    room_id_t roomId;
+    sensor_value_t previousValues[RUN_AVG_LENGTH];
+    sensor_ts_t ts;
 };
-*/
+
+
+typedef struct element element_t;
+
+
 #endif /* _CONFIG_H_ */

@@ -5,6 +5,14 @@
 #ifndef DATAMGR_H_
 #define DATAMGR_H_
 
+#ifndef SET_MAX_TEMP
+#error SET_MAX_TEMP not set
+#endif
+
+#ifndef SET_MIN_TEMP
+#error SET_MIN_TEMP not set
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include "config.h"
@@ -33,7 +41,7 @@ void datamgr_parse_room_sensor_map(FILE *fp_sensor_map);
  * @param valueList the array with the previous values
  * @param value the value that need to be added to the list
  */
-void add_sensor_value(double *valueList[RUN_AVG_LENGTH], sensor_data_t value);
+void add_sensor_value(sensor_data_t *valueList[RUN_AVG_LENGTH], sensor_data_t *value);
 
 /**
  * This method calculates the average of the values inside of the array
@@ -41,12 +49,6 @@ void add_sensor_value(double *valueList[RUN_AVG_LENGTH], sensor_data_t value);
  * @return the average
  */
 sensor_value_t calculate_avg(double valueList[RUN_AVG_LENGTH]);
-
-
-/**
- * @return the address of the dplist with the room_id & sensor_id
- */
-dplist_t *get_dplist();
 
 /**
  * This method should be called to clean up the datamgr, and to free all used memory. 
@@ -83,5 +85,11 @@ time_t datamgr_get_last_modified(sensor_id_t sensor_id);
  *  \return the total amount of sensors
  */
 int datamgr_get_total_sensors();
+
+
+/**
+ * The datamgr thread
+*/
+void *data_manager_thread();
 
 #endif  //DATAMGR_H_

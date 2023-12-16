@@ -8,11 +8,11 @@
 #ifndef DTIMEOUT
 #define DTIMEOUT 5
 #endif
-
+/*
 #ifndef MAX_CONN
 #define MAX_CONN 3  // max number of connections the server will handle before it will stop
 #endif
-
+*/
 #include "config.h"
 
 /**
@@ -28,6 +28,6 @@ void *thread_runner(void *arg);
  * @param argv
  * @return
  */
-int start_connmgr(int argc, char *argv[]);
+void *start_connmgr(void *argv[]);
 
 #endif  //_CONNMGR_H_

@@ -20,7 +20,7 @@ extern sbuffer_t *buffer;
 
 void *thread_runner(void *arg){
     tcpsock_t *client = (tcpsock_t *) arg;
-    sensor_data_t data = malloc(sizeof(sensor_data_t));
+    sensor_data_t *data = malloc(sizeof(sensor_data_t));
 
     int bytes, result;
     do {
@@ -28,11 +28,11 @@ void *thread_runner(void *arg){
         result = tcp_receive(client, (void *) &data, &bytes);
 
         if ((result == TCP_NO_ERROR) && bytes) {
-            if(sbuffer_insert(&buffer, &data) != SBUFFER_SUCCESS){
+            if(sbuffer_insert(buffer, data) != SBUFFER_SUCCESS){
                 fprintf(stderr, "Error connmgr in thread_runner: failed inserting the data into the buffer\n");
             }
-            printf("sensor id = %" PRIu16 " - temperature = %g - timestamp = %ld\n", data.id, data.value,
-                    (long int) data.ts);
+            printf("sensor id = %" PRIu16 " - temperature = %g - timestamp = %ld\n", data->id, data->value,
+                    (long int) data->ts);
         }
     } while (result == TCP_NO_ERROR);
     if (result == TCP_CONNECTION_CLOSED)
@@ -47,13 +47,6 @@ void *thread_runner(void *arg){
 
 void *start_connmgr(void *argv[]) {
     // processing method arguments
-    /*
-    connmgr_parameters params = (connmgr_parameters *) arguments;
-    char **argv[3] = params->server_arguments;
-    sbuffer_t *buffer = params->buffer;
-    int MAX_CONN = atoi(argv[2]);
-    int PORT = atoi(argv[1]);
-     */
     int MAX_CONN = atoi((char *)argv[2]);
     int PORT = atoi((char *)argv[1]);
 
@@ -62,7 +55,6 @@ void *start_connmgr(void *argv[]) {
 
     // initialising server variables
     tcpsock_t *server, *client;
-    int bytes, result;
     int conn_counter = 0;
 
     // opening the TCP connection
@@ -93,8 +85,9 @@ void *start_connmgr(void *argv[]) {
     // inserting an end-of-stream marker in the buffer
     sensor_data_t *data = (sensor_data_t *)malloc(sizeof(sensor_data_t));
     //TODO: vragen als deze end-of-stream marker correct is gedaan --> data.id shit
-    data.id = 0;    // making an indication
-    if(sbuffer_insert(buffer, &data) != SBUFFER_SUCCESS){
+    data->id = 0;    // making an indication
+    if(sbuffer_insert(buffer, data) != SBUFFER_SUCCESS){
         fprintf(stderr, "Error in inserting the end-of-stream marker into the buffer\n");
     }
+    return NULL;
 }

@@ -9,51 +9,20 @@
 #include "datamgr.h"
 #include "connmgr.h"
 #include "lib/dplist.h"
+
+//TODO: dplist.c verwijderen
 #include "lib/dplist.c"
 #include <stdbool.h>
 #include "sensor_db.h"
+#include "config.h"
 
 
 // local variables
 sbuffer_t *buffer;
 FILE* csv_file;
+extern dplist_t list;
 
 
-
-void* data_manager_thread() {
-    // reading data from buffer via the sbuffer_read() function
-    bool node_was_found;
-    dplist_t list = get_dplist();
-
-    while(1){
-        sensor_data_t data;     // to save the data in
-        if(sbuffer_read(buffer, &data) != SBUFFER_SUCCESS){
-            fprintf(stderr, "Error, in reading the buffer\n")
-            break; // while loop stops if end or error is hit
-        }
-
-        // updating the dplist
-        dplist_node_t *current_node = list.head;
-        node_was_found = false;
-
-        while(current_node != NULL){
-            if(current_node->element->sensorId == data.id){
-                current_node->element->ts = data.ts;
-                add_sensor_value(current_node->element->previousValues, data.value);
-                current_node->element->average = calculate_avg(current_node->element->previousValues);
-                node_was_found = true;
-                break;
-            }
-            current_node = current_node->next;
-        }
-
-        // checking if the node was found
-        if(!node_was_found){
-            fprintf(stderr, "Error, sensor was not found in de dplist\n")
-        }
-    }
-    return NULL;
-}
 
 void* storage_manager_thread() {
     // reading data from buffer via the sbuffer_remove()S
@@ -92,18 +61,15 @@ int main(int argc, char *argv[]) {
      */
 
     // setting up the data manager
-    FILE fp_sensor_map = fopen(room_sensor.map, 'r');
-    datamgr_parse_sensor_files(fp_sensor_map);
-    dplist_t *list = get_dplist();
-    dplist_node_t *current_node = list->head;
+    FILE *fp_sensor_map = fopen("room_sensor.map", "r");
+    datamgr_parse_room_sensor_map(fp_sensor_map);
 
     // setting up the storage manager
     csv_file = open_db("data.csv", false);
 
     // creating the threads
     pthread_t tid[3];
-    pthread_create(&tid[0], NULL,start_connmgr, (void *) argv);
-    //pthread_create(&tid[0], NULL,start_connmgr, (void *) &parameters);
+    pthread_create(&tid[0], NULL, (void *)start_connmgr, (void *) argv);
     pthread_create(&tid[1], NULL, data_manager_thread, NULL);
     pthread_create(&tid[2], NULL, storage_manager_thread, NULL);
 
