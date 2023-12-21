@@ -1,30 +1,32 @@
 /**
  * \author Maxime Schuybroeck
  */
+#include "lib/dplist.h"
+//TODO: nog wegkrijgen
+#include "lib/dplist.c"
 #include "config.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
 #include <assert.h>
-#include "./lib/dplist.h"
 #include "datamgr.h"
 #include "sbuffer.h"
+#include <string.h>
 
-//TODO: dplist.c nog weg doen
-#include "lib/dplist.c"
 
-// locale variable
+// global variable
 extern sbuffer_t *buffer;
-int8_t index = 0;
-
-
+int8_t index_value = 0;
 static dplist_t *list;
 
 
-
-//TODO: deze code nog bezien wa ik er mee doe, van hier
 static void * element_copy(void *element){
-    return element;
+    element_t *copy = (element_t *) malloc(sizeof(element_t));
+    if (copy == NULL) {
+        exit(EXIT_FAILURE);
+    }
+    memcpy(copy, element, sizeof(element_t));
+    return (void *)copy;
 }
 
 static void element_free(void **element){
@@ -33,7 +35,23 @@ static void element_free(void **element){
 }
 
 static int element_compare(void *X, void *Y){
-    return 0;
+    //checking if they are NULL
+
+    element_t *x = (element_t *) X;
+    element_t *y = (element_t *) Y;
+    if(x->sensorId == 0 || y->sensorId == 0){
+        return -1;
+    }
+
+    if(x->sensorId == y->sensorId){
+        return 0;
+        /*
+    }else if(x->sensorId < y->sensorId){
+        return -1;
+    }else if(x->sensorId > y->sensorId){
+        return -1;
+         */
+    }else return -1;
 }
 // tot hier
 
@@ -46,6 +64,9 @@ void datamgr_parse_room_sensor_map(FILE *fp_sensor_map){
 
     int room_id, sensor_id;
     list = dpl_create(element_copy, element_free, element_compare);
+    //list = dpl_create(element_free);
+
+
 
     // reading from the sensor map file
     dplist_node_t *current_node = list->head;
@@ -58,10 +79,10 @@ void datamgr_parse_room_sensor_map(FILE *fp_sensor_map){
 }
 
 void add_sensor_value(sensor_data_t *valueList[RUN_AVG_LENGTH], sensor_data_t *value){
-    valueList[index] = value;
-    index++;
-    if(index > 4){
-        index = 0;
+    valueList[index_value] = value;
+    index_value++;
+    if(index_value > 4){
+        index_value = 0;
     }
 }
 
@@ -144,7 +165,7 @@ time_t datamgr_get_last_modified(sensor_id_t sensor_id){
 int datamgr_get_total_sensors(){
     dplist_node_t *current_node = list->head;
     sensor_id_t sensor_counter[dpl_size(list)]; // same size as the dplist since the sensor list by definition can only be smaller
-    int index = 0;
+    int index_value = 0;
 
     // initializing the array to avoid garbage values
     for (int i = 0; i < dpl_size(list); i++) {
@@ -154,19 +175,19 @@ int datamgr_get_total_sensors(){
     while (current_node != NULL){
         // checking if the sensor is already present in the list
         bool already_present = false;
-        for (int i = 0; i < index; i++) {
+        for (int i = 0; i < index_value; i++) {
             if (sensor_counter[i] == current_node->element->sensorId) {
                 already_present = true;
                 break;
             }
         }
         if(!already_present){
-            sensor_counter[index] = current_node->element->sensorId;
-            index++;
+            sensor_counter[index_value] = current_node->element->sensorId;
+            index_value++;
         }
         current_node = current_node->next;
     }
-    return index + 1;
+    return index_value + 1;
 }
 
 void *data_manager_thread() {
@@ -179,6 +200,11 @@ void *data_manager_thread() {
             fprintf(stderr, "Error, in reading the buffer\n");
             break; // while loop stops if end or error is hit
         }
+        if(data.id < 1){
+            char msg[55];
+            snprintf(msg, sizeof(msg), "Received sensor data with invalid sensor node ID %" PRIu16 "\n", data.id);
+            write_to_log_process(msg);
+        }
 
         // updating the dplist
         dplist_node_t *current_node = list->head;
@@ -188,13 +214,22 @@ void *data_manager_thread() {
             if(current_node->element->sensorId == data.id){
                 current_node->element->ts = data.ts;
                 //adding value to the list with previous values
-                current_node->element->previousValues[index] = (data.value);
-                index++;
-                if(index > 4){
-                    index = 0;
+                current_node->element->previousValues[index_value] = (data.value);
+                index_value++;
+                if(index_value > 4){
+                    index_value = 0;
                 }
 
                 node_was_found = true;
+                // writing the log message
+                char msg[55];
+                if(data.value > datamgr_get_avg(current_node->element->sensorId)){
+                    snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " reports it’s too warm\n", data.id);
+
+                }else{
+                    snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " reports it’s too cold\n", data.id);
+                }
+                write_to_log_process(msg);
                 break;
             }
             current_node = current_node->next;
@@ -204,6 +239,8 @@ void *data_manager_thread() {
         if(!node_was_found){
             fprintf(stderr, "Error, sensor was not found in de dplist\n");
         }
+
+
     }
     return NULL;
 

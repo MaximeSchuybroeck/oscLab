@@ -5,39 +5,14 @@
 #define _GNU_SOURCE
 #include <stdlib.h>
 #include <stdio.h>
+//TODO: wegdoen
 #include <assert.h>
 #include "dplist.h"
 #include "../config.h"
 
-/*
- * definition of error codes
- * */
-#define DPLIST_NO_ERROR 0
-#define DPLIST_MEMORY_ERROR 1 // error due to mem alloc failure
-#define DPLIST_INVALID_ERROR 2 //error due to a list operation applied on a NULL list
+#include <inttypes.h>
+#include <string.h>
 
-#ifdef DEBUG
-#define DEBUG_PRINTF(...) 									                                        \
-        do {											                                            \
-            fprintf(stderr,"\nIn %s - function %s at line %d: ", __FILE__, __func__, __LINE__);	    \
-            fprintf(stderr,__VA_ARGS__);								                            \
-            fflush(stderr);                                                                         \
-                } while(0)
-#else
-#define DEBUG_PRINTF(...) (void)0
-#endif
-
-
-#define DPLIST_ERR_HANDLER(condition, err_code)                         \
-    do {                                                                \
-            if ((condition)) DEBUG_PRINTF(#condition " failed\n");      \
-            assert(!(condition));                                       \
-        } while(0)
-
-
-/*
- * The real definition of struct list / struct node
- */
 
 struct dplist_node {
     dplist_node_t *prev, *next;
@@ -46,11 +21,8 @@ struct dplist_node {
 
 struct dplist {
     dplist_node_t *head;
-
     void *(*element_copy)(void **src_element);
-
     void (*element_free)(void **element);
-
     int (*element_compare)(void *x, void *y);
 };
 
@@ -61,11 +33,11 @@ dplist_t *dpl_create(// callback functions
         void (*element_free)(void **element),
         int (*element_compare)(void *x, void *y)
 ) {
-    dplist_t *list;
-    list = malloc(sizeof(struct dplist));
+    dplist_t *list = malloc(sizeof(struct dplist));
     list->head = NULL;
     //TODO: zien of dat dit niet weg moet
     list->element_copy = (void *(*)(void **))element_copy;
+    //list->element_copy = element_copy;
     list->element_free = element_free;
     list->element_compare = element_compare;
     return list;
@@ -83,20 +55,6 @@ void dpl_free(dplist_t **list, bool free_element) {
             *list = dpl_remove_at_index(*list,i,free_element);
         }
         free(*list);
-        /*
-        dplist_node_t *current_node = (*list)->head;
-        dplist_node_t *node_to_free = current_node;
-        while(current_node->next !=NULL ){
-            node_to_free = current_node;
-            current_node = current_node->next;
-            if(free_element){
-                (*list)->element_free((void **)(node_to_free->element));
-            }
-            free(node_to_free);
-        }
-        free(*list);
-        *list = NULL;
-         */
     }
 
 }

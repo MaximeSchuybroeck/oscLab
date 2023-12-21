@@ -36,15 +36,18 @@ typedef struct {
     bool read_by_datamgr;
 } sensor_data_t;
 
-struct element {
+typedef struct {
     sensor_id_t sensorId;
     room_id_t roomId;
     sensor_value_t previousValues[RUN_AVG_LENGTH];
     sensor_ts_t ts;
-};
+} element_t;
 
 
-typedef struct element element_t;
+
+
+int write_to_log_process(char *msg);
+
 
 
 #endif /* _CONFIG_H_ */

@@ -4,7 +4,6 @@
 
 #include <stdio.h>
 #include <stdbool.h>
-#include "logger.h"
 #include "config.h"
 #include "sensor_db.h"
 
@@ -21,11 +20,9 @@ FILE * open_db(char * filename, bool append){
         printf("Error in opening the db file because it is EMPTY\n");
         return db;
     }
-    // Create the log process
-    create_log_process();
 
     // logging
-    char *msg = "Data log_file opened.\n";
+    char *msg = "A new data.csv file has been created.\n";
     write_to_log_process(msg);
 
     return db;
@@ -38,11 +35,12 @@ int insert_sensor(FILE * f, sensor_id_t id, sensor_value_t value, sensor_ts_t ts
         return -1;
     }
     // log message
-    char *msg = "Data inserted.\n";
+    char msg[55];
+    snprintf(msg, sizeof(msg), "Data insertion from sensor %d succeeded\n", id);
 
     // writing to the csv file
     if(fprintf(f, "%u, %.6lf, %ld\n", id, value, ts) == -1){
-        msg = "An error occurred when writing to the csv file.\n";
+        snprintf(msg, sizeof(msg), "An error occurred when writing to the csv file.\n");
     }
 
     // logging
@@ -60,10 +58,9 @@ int close_db(FILE * f){
     fclose(f);
 
     // logging
-    char *msg = "CSV file has been closed.\n";
+    char msg[55];
+    snprintf(msg, sizeof(msg), "The data.csv file has been closed\n");
     write_to_log_process(msg);
 
-    // closing the log_file
-    end_log_process();
     return 0;
 }

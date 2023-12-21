@@ -60,7 +60,7 @@ int sbuffer_remove(sbuffer_t *buffer, sensor_data_t *data) {
         pthread_mutex_unlock(&thread_mutex);
         return SBUFFER_NO_DATA;
     }
-    if(buffer->head->data.read_by_datamgr)
+    if(buffer->head->data.read_by_datamgr){
         *data = buffer->head->data;
         dummy = buffer->head;
         if (buffer->head == buffer->tail) // buffer has only one node

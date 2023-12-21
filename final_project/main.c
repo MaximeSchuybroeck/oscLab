@@ -8,21 +8,83 @@
 #include <string.h>
 #include "datamgr.h"
 #include "connmgr.h"
-#include "lib/dplist.h"
-
-//TODO: dplist.c verwijderen
-#include "lib/dplist.c"
 #include <stdbool.h>
 #include "sensor_db.h"
 #include "config.h"
+#include <unistd.h>
+#include <time.h>
+#include <stdlib.h>
 
 
-// local variables
+// global variables
 sbuffer_t *buffer;
 FILE* csv_file;
-extern dplist_t list;
+int log_pipe[2];
+FILE *log_file;
+int sequence_num = 0;
+
+///TODO: comments nog verwijderen
+// log_pipe[0] = reading
+// log_pipe[1] = writing
+
+int write_to_log_process(char *msg){
+    write(log_pipe[1], msg, strlen(msg));
+    return 0; // = success
+}
+
+int create_log_process(){
+    // opening the pipe
+    if(pipe(log_pipe) == -1){
+        printf("Error in opening/creating the pipe\n");
+        return -1;
+    }
+
+    // forking
+    pid_t pid = fork();
+    if(pid == -1){
+        printf("Error in forking log\n");
+        return -1;
+    } else if(pid == 0){    // = child process
+        // Closing the writing process
+        close(log_pipe[1]);
+
+        // opening the log_file
+        log_file = fopen("gateway.log", "a"); //append mode
+        if(log_file == NULL){
+            printf("Error in opening the log_file because it is EMPTY\n");
+            return -1;
+        }
+
+        //local variables
+        int buffer[256];
+        ssize_t result_bytes;
+
+        while((result_bytes = read(log_pipe[0], buffer, sizeof(buffer)))){
+            time_t current_time;
+            time(&current_time);
+            char *date = ctime(&current_time);
+            date[strlen(date) - 1] = '\0';
+            fprintf(log_file, "%d - %s - ", sequence_num, date);
+            fwrite(buffer,1,result_bytes,log_file);
+            sequence_num++;
+        }
 
 
+        // closing the log log_file
+        fclose(log_file);
+
+    }
+    // parent process
+    close(log_pipe[0]);
+    return 0;
+}
+
+int end_log_process(){
+    // closing the write process
+    close(log_pipe[1]);
+    return 0;
+}
+// logging function end
 
 void* storage_manager_thread() {
     // reading data from buffer via the sbuffer_remove()S
@@ -39,11 +101,10 @@ void* storage_manager_thread() {
     return NULL;
 }
 
-
 int main(int argc, char *argv[]) {
     // first checking if the provided arguments are right
     if(argc != 2) {
-        printf("Please provide the right arguments: first the port, then the max nb of clients");
+        printf("Please provide the right arguments: first the port, then the max nb of clients\n");
         return -1;
     }
 
@@ -53,18 +114,17 @@ int main(int argc, char *argv[]) {
         return -1;
     }
 
-    // starting the connection manager
-    /*
-    struct connmgr_parameters parameters;
-    parameters.server_arguments = argv;
-    parameters.buffer = buffer;
-     */
+    // starting the logger
+    if(create_log_process() != 0){
+        fprintf(stderr, "Failed ending the log process\n");
+    }
 
     // setting up the data manager
     FILE *fp_sensor_map = fopen("room_sensor.map", "r");
     datamgr_parse_room_sensor_map(fp_sensor_map);
 
     // setting up the storage manager
+
     csv_file = open_db("data.csv", false);
 
     // creating the threads
@@ -82,5 +142,9 @@ int main(int argc, char *argv[]) {
     close_db(csv_file);
     // freeing the buffer
     sbuffer_free(&buffer);
+    // closing the logger process
+    if(end_log_process() != 0){
+        fprintf(stderr, "Failed ending the log process\n");
+    }
 
 }
