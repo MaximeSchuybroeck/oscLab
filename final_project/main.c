@@ -118,10 +118,10 @@ int main(int argc, char *argv[]) {
     pthread_t tid[3];
     pthread_create(&tid[0], NULL, (void *)start_connmgr, (void *) argv);
     pthread_create(&tid[1], NULL, data_manager_thread, NULL);
-    pthread_create(&tid[2], NULL, storage_manager_thread, NULL);
+    //pthread_create(&tid[2], NULL, storage_manager_thread, NULL);
 
     // joining the treads
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 2; i++) {
         pthread_join(tid[i], NULL);
     }
 
@@ -129,6 +129,8 @@ int main(int argc, char *argv[]) {
     close_db(csv_file);
     // freeing the buffer
     sbuffer_free(&buffer);
+    // freeing hte list
+    datamgr_free();
     // closing the logger process
     if(end_log_process() != 0){
         fprintf(stderr, "Failed ending the log process\n");

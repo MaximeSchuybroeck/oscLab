@@ -6,6 +6,7 @@
 #include <pthread.h>
 #include "sbuffer.h"
 #include "connmgr.h"
+#include "string.h"
 
 // global variable
 extern sbuffer_t *buffer;
@@ -14,6 +15,7 @@ extern sbuffer_t *buffer;
 void *thread_runner(void *arg) {
     tcpsock_t *client = (tcpsock_t *) arg;
     sensor_data_t *data = malloc(sizeof(sensor_data_t));
+    memset(data, 0, sizeof(sensor_data_t));
 
     int bytes, result;
     do {
@@ -28,9 +30,9 @@ void *thread_runner(void *arg) {
             char msg[55];
             snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " has opened a new connection\n", data->id);
             write_to_log_process(msg);
-
-            printf("sensor id = %" PRIu16 " - temperature = %g - timestamp = %ld\n", data->id, data->value,
-                    (long int) data->ts);
+            //TODO: printf weg doen
+            //printf("sensor id = %" PRIu16 " - temperature = %f - timestamp = %ld\n", data->id, data->value,
+            //        (long int) data->ts);
         }
     } while (result == TCP_NO_ERROR);
 
@@ -58,7 +60,7 @@ void *start_connmgr(void *argv[]) {
     int conn_counter = 0;
 
     if (tcp_passive_open(&server, PORT) != TCP_NO_ERROR) exit(EXIT_FAILURE);
-    printf("Test server is started\n");
+    printf("Server is started\n");
 
     while (conn_counter < MAX_CONN) {
         if (tcp_wait_for_connection(server, &client) != TCP_NO_ERROR) exit(EXIT_FAILURE);
@@ -69,7 +71,7 @@ void *start_connmgr(void *argv[]) {
             free(client);
             exit(EXIT_FAILURE);
         } else{
-            printf("Created thread %u \n", conn_counter);
+            printf("Created connection thread %u \n", conn_counter);
             conn_counter++;
         }
 

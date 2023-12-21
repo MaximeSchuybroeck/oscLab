@@ -34,7 +34,14 @@ struct dplist {
     void (*element_free)(void **element);
     int (*element_compare)(void *x, void *y);
 };
-
+/*
+struct dplist {
+    dplist_node_t *head;
+    void *(*element_copy)(void **src_element);
+    void (*element_free)(void **element);
+    int (*element_compare)(void *x, void *y);
+};
+*/
 /* General remark on error handling
  * All functions below will:
  * - use assert() to check if memory allocation was successfully.
@@ -46,12 +53,14 @@ struct dplist {
  * \param element_compare callback function to compare two element elements; returns -1 if x<y, 0 if x==y, or 1 if x>y
  * \return a pointer to a newly-allocated and initialized list.
  */
+dplist_t *dpl_create();
+ /*
 dplist_t *dpl_create(
         void* (*element_copy)(void *element),
         void (*element_free)(void **element),
         int (*element_compare)(void *x, void *y)
 );
-
+*/
 /** Deletes all elements in the list
  * - Every list node of the list needs to be deleted. (free memory)
  * - The list itself also needs to be deleted. (free all memory)

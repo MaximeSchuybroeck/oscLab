@@ -65,7 +65,7 @@ run : sensor_gateway sensor_node
 	gcc -g main.c datamgr.c  connmgr.c sbuffer.c sensor_db.c lib/dplist.c lib/tcpsock.c -o debug.out
 
 debug : main.c datamgr.c connmgr.c sbuffer.c sensor_db.c lib/dplist.c lib/tcpsock.c
-	gdb --args ./sensor_gateway 5678 3
+	#gdb --args ./sensor_gateway 5678 3
 	gcc -g main.c datamgr.c  connmgr.c sbuffer.c sensor_db.c lib/dplist.c lib/tcpsock.c -o debug.out
 
 runclient1: sensor_node.c
@@ -79,6 +79,10 @@ runclient3: sensor_node.c
 
 kill:
 	killall sensor_node
+	sleep 10
+	killall sensor_gateway
 
+debug_val: sensor_gateway
+	valgrind --leak-check=full --show-leak-kinds=all ./sensor_gateway 5678 3
 zip:
 	zip lab_final.zip main.c connmgr.c connmgr.h datamgr.c datamgr.h sbuffer.c sbuffer.h sensor_db.c sensor_db.h config.h lib/dplist.c lib/dplist.h lib/tcpsock.c lib/tcpsock.h

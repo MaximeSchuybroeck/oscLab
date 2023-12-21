@@ -17,7 +17,7 @@ extern sbuffer_t *buffer;
 int8_t index_value = 0;
 static dplist_t *list;
 
-
+/*
 static void * element_copy(void *element){
     element_t *copy = (element_t *) malloc(sizeof(element_t));
     if (copy == NULL) {
@@ -45,7 +45,7 @@ static int element_compare(void *X, void *Y){
         return 0;
     }else return -1;
 }
-
+*/
 void datamgr_parse_room_sensor_map(FILE *fp_sensor_map) {
     // checking if the file pointers are NULL
     if (fp_sensor_map == NULL) {
@@ -72,6 +72,7 @@ void datamgr_parse_room_sensor_map(FILE *fp_sensor_map) {
         printf("Room ID: %d, Sensor ID: %d\n", room_id, sensor_id);
     }
 }
+
 
 
 void add_sensor_value(sensor_data_t *valueList[RUN_AVG_LENGTH], sensor_data_t *value){
