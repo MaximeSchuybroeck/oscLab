@@ -62,7 +62,23 @@ clean-all: clean
 
 run : sensor_gateway sensor_node
 	@echo "Debugging"
+	gcc -g main.c datamgr.c  connmgr.c sbuffer.c sensor_db.c lib/dplist.c lib/tcpsock.c -o debug.out
+
+debug : main.c datamgr.c connmgr.c sbuffer.c sensor_db.c lib/dplist.c lib/tcpsock.c
 	gdb --args ./sensor_gateway 5678 3
+	gcc -g main.c datamgr.c  connmgr.c sbuffer.c sensor_db.c lib/dplist.c lib/tcpsock.c -o debug.out
+
+runclient1: sensor_node.c
+	./sensor_node 15 4 127.0.0.1 5678
+
+runclient2: sensor_node.c
+	./sensor_node 21 4 127.0.0.1 5678
+
+runclient3: sensor_node.c
+	./sensor_node 37 5 127.0.0.1 5678
+
+kill:
+	killall sensor_node
 
 zip:
 	zip lab_final.zip main.c connmgr.c connmgr.h datamgr.c datamgr.h sbuffer.c sbuffer.h sensor_db.c sensor_db.h config.h lib/dplist.c lib/dplist.h lib/tcpsock.c lib/tcpsock.h

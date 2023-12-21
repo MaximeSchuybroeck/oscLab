@@ -103,7 +103,7 @@ void* storage_manager_thread() {
 
 int main(int argc, char *argv[]) {
     // first checking if the provided arguments are right
-    if(argc != 2) {
+    if(argc < 3) {
         printf("Please provide the right arguments: first the port, then the max nb of clients\n");
         return -1;
     }

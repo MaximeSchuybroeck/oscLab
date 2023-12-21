@@ -2,7 +2,6 @@
  * \author Maxime Schuybroeck
  */
 
-#define _GNU_SOURCE
 #include <stdlib.h>
 #include <stdio.h>
 //TODO: wegdoen
@@ -14,17 +13,7 @@
 #include <string.h>
 
 
-struct dplist_node {
-    dplist_node_t *prev, *next;
-    element_t *element;
-};
 
-struct dplist {
-    dplist_node_t *head;
-    void *(*element_copy)(void **src_element);
-    void (*element_free)(void **element);
-    int (*element_compare)(void *x, void *y);
-};
 
 
 
@@ -59,7 +48,59 @@ void dpl_free(dplist_t **list, bool free_element) {
 
 }
 
+dplist_t *dpl_insert_at_index(dplist_t *list, void *element, int index, bool insert_copy) {
+    dplist_node_t *ref_at_index, *list_node;
+    void *insert_element = NULL;
+    if (list == NULL) return NULL;
+    list_node = malloc(sizeof(dplist_node_t));
+    //list_node->element = element; origineel van 1 en 2
+    //insert copy maakt of deep copy of gewoon ref.
+    if(insert_copy){
+        insert_element = (list)->element_copy(element);
+    }
+    else{
+        insert_element = element;
+    }
+    list_node->element = insert_element;
+    //gekopieerd van ex 1 en 2
+    // pointer drawing breakpoint
+    if (list->head == NULL) { // covers case 1
+        list_node->prev = NULL;
+        list_node->next = NULL;
+        list->head = list_node;
+        // pointer drawing breakpoinSt
+    } else if (index <= 0) { // covers case 2
+        list_node->prev = NULL;
+        list_node->next = list->head;
+        list->head->prev = list_node;
+        list->head = list_node;
+        // pointer drawing breakpoint
+    } else {
+        ref_at_index = dpl_get_reference_at_index(list, index);
+        if (ref_at_index == NULL) {
+            free(list_node);
+            return list;
+        }
+        // pointer drawing breakpoint
+        if (index < dpl_size(list)) { // covers case 4
+            list_node->prev = ref_at_index->prev;
+            list_node->next = ref_at_index;
+            ref_at_index->prev->next = list_node;
+            ref_at_index->prev = list_node;
+            // pointer drawing breakpoint
+        } else { // covers case 3
+            assert(ref_at_index->next == NULL);
+            list_node->next = NULL;
+            list_node->prev = ref_at_index;
+            ref_at_index->next = list_node;
+            // pointer drawing breakpoint
+        }
+    }
+    //free(insert_element);
+    return list;
+}
 
+/*
 dplist_t *dpl_insert_at_index(dplist_t *list, void *element, int index, bool insert_copy) {
 
     if (list == NULL) {
@@ -76,7 +117,25 @@ dplist_t *dpl_insert_at_index(dplist_t *list, void *element, int index, bool ins
     }
     new_node->next = NULL;
     new_node->prev = NULL;
-    if(list->head == NULL){
+    if (list->head == NULL || index <= 0) {
+        // Insert at the beginning of the list
+        new_node->next = list->head;
+        if (list->head != NULL) {
+            list->head->prev = new_node;
+        }
+        list->head = new_node;
+    } else {
+        // Insert at a specific index
+        dplist_node_t *node_at_index = dpl_get_reference_at_index(list, index);
+        new_node->prev = node_at_index->prev;
+        new_node->next = node_at_index;
+        node_at_index->prev->next = new_node;
+        if (new_node->next != NULL) {
+            new_node->next->prev = new_node;
+        }
+    }
+
+    if(list->head == NULL ){
         list->head = new_node;
     } else if(index <= 0){
         list->head->prev = new_node;
@@ -91,9 +150,10 @@ dplist_t *dpl_insert_at_index(dplist_t *list, void *element, int index, bool ins
             new_node->next->prev = new_node;
         }
     }
+
     return list;
 }
-
+*/
 dplist_t *dpl_remove_at_index(dplist_t *list, int index, bool free_element) {
 
     if(list == NULL){
@@ -174,6 +234,25 @@ dplist_node_t *dpl_get_reference_at_index(dplist_t *list, int index) {
     if (list == NULL || list->head == NULL || index < 0) {
         return NULL;
     }
+
+    int count = 0;
+    dplist_node_t *current_node = list->head;
+
+    while (current_node != NULL && count < index) {
+        current_node = current_node->next;
+        count++;
+    }
+
+    return current_node;
+}
+
+
+/*
+dplist_node_t *dpl_get_reference_at_index(dplist_t *list, int index) {
+
+    if (list == NULL || list->head == NULL || index < 0) {
+        return NULL;
+    }
     int count = 0;
     dplist_node_t *current_node = list->head;
     while(current_node->next != NULL && count < index){
@@ -182,7 +261,7 @@ dplist_node_t *dpl_get_reference_at_index(dplist_t *list, int index) {
     }
     return current_node;
 }
-
+*/
 void *dpl_get_element_at_reference(dplist_t *list, dplist_node_t *reference) {
 
     if (list == NULL || list->head == NULL || reference == NULL) {

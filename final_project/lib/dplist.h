@@ -16,11 +16,24 @@ typedef enum {
 /**
  * dplist_t is a struct containing at least a head pointer to the start of the list;
  */
+
+
+
 typedef struct dplist dplist_t;
 
 typedef struct dplist_node dplist_node_t;
 
+struct dplist_node {
+    dplist_node_t *prev, *next;
+    element_t *element;
+};
 
+struct dplist {
+    dplist_node_t *head;
+    void *(*element_copy)(void **src_element);
+    void (*element_free)(void **element);
+    int (*element_compare)(void *x, void *y);
+};
 
 /* General remark on error handling
  * All functions below will:

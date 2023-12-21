@@ -1,3 +1,4 @@
+make clean-all
 make all
 port=5678
 clients=5
