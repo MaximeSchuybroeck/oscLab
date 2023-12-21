@@ -25,7 +25,7 @@ int sequence_num = 0;
 
 ///TODO: comments nog verwijderen
 // log_pipe[0] = reading
-// log_pipe[1] = writing
+// log_pipe[1] = writingS
 
 int write_to_log_process(char *msg){
     write(log_pipe[1], msg, strlen(msg));
