@@ -46,34 +46,33 @@ static int element_compare(void *X, void *Y){
     }else return -1;
 }
 
-void datamgr_parse_room_sensor_map(FILE *fp_sensor_map){
+void datamgr_parse_room_sensor_map(FILE *fp_sensor_map) {
     // checking if the file pointers are NULL
     if (fp_sensor_map == NULL) {
         fprintf(stderr, "Error because the file points to NULL\n");
         return;
     }
 
-    // initialising variables to insert a new element in the list
-    uint16_t room_id, sensor_id;
-    list = dpl_create(element_copy, element_free, element_compare);
+    int room_id, sensor_id;
 
     // reading from the sensor map file
-    while (fscanf(fp_sensor_map, "%hu %hu", &room_id, &sensor_id) == 2) {
+    while (fscanf(fp_sensor_map, "%d %d", &room_id, &sensor_id) == 2) {
         element_t *new_element = (element_t *)malloc(sizeof(element_t));
         if (new_element == NULL) {
             fprintf(stderr, "Error allocating memory for new element\n");
             exit(EXIT_FAILURE);
         }
+
         new_element->roomId = room_id;
         new_element->sensorId = sensor_id;
 
         // add the new element to the list
         list = dpl_insert_at_index(list, new_element, dpl_size(list), true);
-        // printing the result
+
         printf("Room ID: %d, Sensor ID: %d\n", room_id, sensor_id);
     }
-
 }
+
 
 void add_sensor_value(sensor_data_t *valueList[RUN_AVG_LENGTH], sensor_data_t *value){
     valueList[index_value] = value;

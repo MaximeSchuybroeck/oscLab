@@ -6,10 +6,12 @@
 #include <stdbool.h>
 #include "config.h"
 #include "sensor_db.h"
+#include "sbuffer.h"
 
 
 // variables
 FILE *db;
+extern sbuffer_t *buffer;
 
 
 FILE * open_db(char * filename, bool append){
@@ -63,4 +65,19 @@ int close_db(FILE * f){
     write_to_log_process(msg);
 
     return 0;
+}
+
+void* storage_manager_thread() {
+    // reading data from buffer via the sbuffer_remove()S
+    while(1){
+        sensor_data_t data;     // to save the data in
+        if(sbuffer_remove(buffer, &data) != SBUFFER_SUCCESS){
+            break; // while loop stops if end or error is hit
+        }
+
+        // writing to the CSV file
+        insert_sensor(db, data.id, data.value, data.ts);
+    }
+
+    return NULL;
 }

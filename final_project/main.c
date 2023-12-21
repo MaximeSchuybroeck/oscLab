@@ -86,20 +86,7 @@ int end_log_process(){
 }
 // logging function end
 
-void* storage_manager_thread() {
-    // reading data from buffer via the sbuffer_remove()S
-    while(1){
-        sensor_data_t data;     // to save the data in
-        if(sbuffer_remove(buffer, &data) != SBUFFER_SUCCESS){
-            break; // while loop stops if end or error is hit
-        }
 
-        // writing to the CSV file
-        insert_sensor(csv_file, data.id, data.value, data.ts);
-    }
-
-    return NULL;
-}
 
 int main(int argc, char *argv[]) {
     // first checking if the provided arguments are right

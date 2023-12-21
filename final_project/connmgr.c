@@ -66,10 +66,13 @@ void *start_connmgr(void *argv[]) {
 
         if (pthread_create(&tid[conn_counter], NULL, thread_runner, client) != 0) {
             printf("Failure creating thread %u \n", conn_counter);
+            free(client);
             exit(EXIT_FAILURE);
-        } else printf("Created thread %u \n", conn_counter);
+        } else{
+            printf("Created thread %u \n", conn_counter);
+            conn_counter++;
+        }
 
-        conn_counter++;
     }
 
     for (int i = 0; i < MAX_CONN; i++) {
@@ -83,6 +86,8 @@ void *start_connmgr(void *argv[]) {
     data->id = 0;
     if (sbuffer_insert(buffer, data) != SBUFFER_SUCCESS) {
         fprintf(stderr, "Error in inserting the end-of-stream marker into the buffer\n");
+        free(data);
+        exit(EXIT_FAILURE);
     }
 
     return NULL;

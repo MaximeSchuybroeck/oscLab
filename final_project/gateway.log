@@ -153,3 +153,7 @@ Sensor node 21 has opened a new connection
 31 - Thu Dec 21 13:03:32 2023 - Sensor node 21 has closed the connection
 Sensor node 37 has closed the connection
 32 - Thu Dec 21 13:03:32 2023 - The data.csv file has been closed
+0 - Thu Dec 21 20:30:09 2023 - A new data.csv file has been created.
+1 - Thu Dec 21 20:30:12 2023 - Sensor node 15 has opened a new connection
+Sensor node 142 has opened a new connection
+0 - Thu Dec 21 20:31:12 2023 - A new data.csv file has been created.

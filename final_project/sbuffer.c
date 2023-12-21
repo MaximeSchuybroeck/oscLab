@@ -11,7 +11,7 @@
 
 
 pthread_mutex_t thread_mutex;
-
+pthread_cond_t wait_condition = PTHREAD_COND_INITIALIZER;
 /**
  * basic node for the buffer, these nodes are linked together to create the buffer
  */
@@ -34,6 +34,7 @@ int sbuffer_init(sbuffer_t **buffer) {
     if (*buffer == NULL) return SBUFFER_FAILURE;
     (*buffer)->head = NULL;
     (*buffer)->tail = NULL;
+    pthread_cond_init(&wait_condition, NULL);
     return SBUFFER_SUCCESS;
 }
 
@@ -47,6 +48,8 @@ int sbuffer_free(sbuffer_t **buffer) {
         (*buffer)->head = (*buffer)->head->next;
         free(dummy);
     }
+    pthread_mutex_destroy(&thread_mutex);
+    pthread_cond_destroy(&wait_condition);
     free(*buffer);
     *buffer = NULL;
     return SBUFFER_SUCCESS;
@@ -79,6 +82,12 @@ int sbuffer_remove(sbuffer_t *buffer, sensor_data_t *data) {
 int sbuffer_read(sbuffer_t *buffer, sensor_data_t *data) {
     if (buffer == NULL) return SBUFFER_FAILURE;
     pthread_mutex_lock(&thread_mutex);
+
+    // waiting for the connection_tread to finish the first insert
+    while (buffer->head == NULL){
+        pthread_cond_wait(&wait_condition, &thread_mutex);
+    }
+
     if (buffer->head == NULL) {
         pthread_mutex_unlock(&thread_mutex);
         return SBUFFER_NO_DATA;
@@ -106,5 +115,6 @@ int sbuffer_insert(sbuffer_t *buffer, sensor_data_t *data) {
         buffer->tail = buffer->tail->next;
     }
     pthread_mutex_unlock(&thread_mutex);
+    pthread_cond_signal(&wait_condition);
     return SBUFFER_SUCCESS;
 }
