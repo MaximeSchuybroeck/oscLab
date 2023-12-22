@@ -14,13 +14,20 @@ extern sbuffer_t *buffer;
 
 void *thread_runner(void *arg) {
     tcpsock_t *client = (tcpsock_t *) arg;
-    sensor_data_t *data = malloc(sizeof(sensor_data_t));
+    sensor_data_t *data = (sensor_data_t *) malloc(sizeof(sensor_data_t));
     memset(data, 0, sizeof(sensor_data_t));
 
     int bytes, result;
     do {
-        bytes = sizeof(sensor_data_t);
-        result = tcp_receive(client, (void *) data, &bytes);
+        // getting the id
+        bytes = sizeof(data->id);
+        result = tcp_receive(client, (void *) &data->id, &bytes);
+        // getting the value
+        bytes = sizeof(data->value);
+        result = tcp_receive(client, (void *) &data->value, &bytes);
+        // getting the ts
+        bytes = sizeof(data->ts);
+        result = tcp_receive(client, (void *) &data->ts, &bytes);
 
         if ((result == TCP_NO_ERROR) && bytes) {
             if (sbuffer_insert(buffer, data) != SBUFFER_SUCCESS) {
@@ -30,6 +37,7 @@ void *thread_runner(void *arg) {
             char msg[55];
             snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " has opened a new connection\n", data->id);
             write_to_log_process(msg);
+            break;
             //TODO: printf weg doen
             //printf("sensor id = %" PRIu16 " - temperature = %f - timestamp = %ld\n", data->id, data->value,
             //        (long int) data->ts);
