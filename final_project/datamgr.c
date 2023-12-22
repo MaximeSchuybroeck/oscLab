@@ -56,10 +56,6 @@ void datamgr_parse_room_sensor_map(FILE *fp_sensor_map) {
     int room_id, sensor_id;
     int insert_index = 0;
     list = dpl_create(element_free);
-    //list = (dplist_t *) malloc(sizeof(dplist_t));
-    //dummy_node->element = NULL;
-    //list->head = dummy_node;
-    //list->head = dummy_node;
 
     // reading from the sensor map file
     while (fscanf(fp_sensor_map, "%d %d", &room_id, &sensor_id) == 2) {
@@ -67,6 +63,11 @@ void datamgr_parse_room_sensor_map(FILE *fp_sensor_map) {
         element_t *new_element = (element_t *)malloc(sizeof(element_t));
         new_element->roomId = room_id;
         new_element->sensorId = sensor_id;
+
+        for(int i = 0; i < RUN_AVG_LENGTH; i++){
+            new_element->previousValues[i] = 0;
+        }
+
 
         // add the new element to the list
         list = dpl_insert_at_index(list, new_element, insert_index, false);
@@ -87,12 +88,17 @@ void add_sensor_value(sensor_data_t *valueList[RUN_AVG_LENGTH], sensor_data_t *v
     }
 }
 
-sensor_value_t calculate_avg(double valueList[RUN_AVG_LENGTH]){
-    double total = 0.0;
+sensor_value_t calculate_avg(sensor_value_t valueList[RUN_AVG_LENGTH]){
+    sensor_value_t total = 0.0;
+    sensor_value_t number_in_list = 0.0;
     for (int i = 0; i < RUN_AVG_LENGTH; i++){
+        if(valueList[i] == 0){
+            break;
+        }
         total = total + valueList[i];
+        number_in_list = number_in_list + 1.0;
     }
-    return total/RUN_AVG_LENGTH;
+    return total/number_in_list;
 }
 
 
@@ -117,7 +123,7 @@ room_id_t datamgr_get_room_id(sensor_id_t sensor_id){
     }
     return -1;
 }
-
+/*
 sensor_value_t datamgr_get_avg(sensor_id_t sensor_id){
     // checking if given sensor_id is valid
     if(sensor_id <= 0){
@@ -144,7 +150,7 @@ sensor_value_t datamgr_get_avg(sensor_id_t sensor_id){
     }
     return -1.0;
 }
-
+*/
 time_t datamgr_get_last_modified(sensor_id_t sensor_id){
     // checking if given sensor_id is valid
     if(sensor_id <= 0){
@@ -223,7 +229,7 @@ void *data_manager_thread() {
                 node_was_found = true;
                 // writing the log message
                 char msg[55];
-                if(data->value > datamgr_get_avg(current_node->element->sensorId)){
+                if(data->value > calculate_avg(current_node->element->previousValues)){
                     snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " reports it’s too warm\n", data->id);
 
                 }else{

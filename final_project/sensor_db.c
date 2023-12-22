@@ -30,9 +30,9 @@ FILE * open_db(char * filename, bool append){
     return db;
 }
 
-int insert_sensor(FILE * f, sensor_id_t id, sensor_value_t value, sensor_ts_t ts){
+int insert_sensor(sensor_id_t id, sensor_value_t value, sensor_ts_t ts){
     // checking if the file is empty
-    if(f == NULL){
+    if(db == NULL){
         printf("Error in opening the file because it is EMPTY\n");
         return -1;
     }
@@ -41,8 +41,8 @@ int insert_sensor(FILE * f, sensor_id_t id, sensor_value_t value, sensor_ts_t ts
     snprintf(msg, sizeof(msg), "Data insertion from sensor %d succeeded\n", id);
 
     // writing to the csv file
-    int result = fprintf(f, "%u, %.6lf, %ld\n", id, value, ts);
-    fflush(f);
+    int result = fprintf(db, "%u, %.6lf, %ld\n", id, value, ts);
+    fflush(db);
     if( result == -1){
         snprintf(msg, sizeof(msg), "An error occurred when writing to the csv file.\n");
     }
@@ -78,7 +78,7 @@ void* storage_manager_thread() {
         }
 
         // writing to the CSV file
-        insert_sensor(db, data->id, data->value, data->ts);
+        insert_sensor(data->id, data->value, data->ts);
     }
     free(data);
     return NULL;

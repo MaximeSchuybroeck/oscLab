@@ -69,9 +69,9 @@ uint16_t datamgr_get_room_id(sensor_id_t sensor_id);
  * Use ERROR_HANDLER() if sensor_id is invalid
  * \param sensor_id the sensor id to look for
  * \return the running AVG of the given sensor
- */
-sensor_value_t datamgr_get_avg(sensor_id_t sensor_id);
 
+sensor_value_t datamgr_get_avg(sensor_id_t sensor_id);
+*/
 /**
  * Returns the time of the last reading for a certain sensor ID
  * Use ERROR_HANDLER() if sensor_id is invalid

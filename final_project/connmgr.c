@@ -57,8 +57,8 @@ void *thread_runner(void *arg) {
 
     result = tcp_close(&client);
     free(data);
-    //pthread_exit(NULL);
-    return NULL;
+    pthread_exit(NULL);
+    //return NULL;
 }
 
 void *start_connmgr(void *argv[]) {
@@ -98,9 +98,9 @@ void *start_connmgr(void *argv[]) {
     data->id = 0;
     if (sbuffer_insert(buffer, data) != SBUFFER_SUCCESS) {
         fprintf(stderr, "Error in inserting the end-of-stream marker into the buffer\n");
-        free(data);
+
         exit(EXIT_FAILURE);
     }
-
+    free(data);
     return NULL;
 }

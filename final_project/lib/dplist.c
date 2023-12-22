@@ -32,7 +32,15 @@ dplist_t *dpl_create(// callback functions
 }
 
 void dpl_free(dplist_t **list, bool free_element) {
-
+    int i = dpl_size(*list)-1;
+    while(i>=0)
+    {
+        *list = dpl_remove_at_index(*list,i,free_element);
+        i = i - 1;
+    }
+    free(*list);
+    *list = NULL;
+    /*
     if(*list == NULL){
         return;
     } else if((*list)->head == NULL){
@@ -44,6 +52,7 @@ void dpl_free(dplist_t **list, bool free_element) {
         }
         free(*list);
     }
+     */
 
 }
 
