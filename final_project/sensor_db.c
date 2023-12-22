@@ -41,7 +41,9 @@ int insert_sensor(FILE * f, sensor_id_t id, sensor_value_t value, sensor_ts_t ts
     snprintf(msg, sizeof(msg), "Data insertion from sensor %d succeeded\n", id);
 
     // writing to the csv file
-    if(fprintf(f, "%u, %.6lf, %ld\n", id, value, ts) == -1){
+    int result = fprintf(f, "%u, %.6lf, %ld\n", id, value, ts);
+    fflush(f);
+    if( result == -1){
         snprintf(msg, sizeof(msg), "An error occurred when writing to the csv file.\n");
     }
 
@@ -68,16 +70,16 @@ int close_db(FILE * f){
 }
 
 void* storage_manager_thread() {
-    // reading data from buffer via the sbuffer_remove()S
+    // reading data from buffer via the sbuffer_remove()
+    sensor_data_t *data = (sensor_data_t *) malloc(sizeof(sensor_data_t));
     while(1){
-        sensor_data_t data;     // to save the data in
-        if(sbuffer_remove(buffer, &data) != SBUFFER_SUCCESS){
+        if(sbuffer_remove(buffer, data) != SBUFFER_SUCCESS){
             break; // while loop stops if end or error is hit
         }
 
         // writing to the CSV file
-        insert_sensor(db, data.id, data.value, data.ts);
+        insert_sensor(db, data->id, data->value, data->ts);
     }
-
+    free(data);
     return NULL;
 }

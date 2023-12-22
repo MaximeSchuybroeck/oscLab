@@ -51,12 +51,14 @@ void *thread_runner(void *arg) {
 
         printf("Peer has closed connection\n");
     } else {
+        //TODO: checken of dit oke is
         printf("Error connmgr in thread_runner: occurred on connection to peer\n");
     }
 
-    tcp_close(&client);
+    result = tcp_close(&client);
     free(data);
-    pthread_exit(NULL);
+    //pthread_exit(NULL);
+    return NULL;
 }
 
 void *start_connmgr(void *argv[]) {

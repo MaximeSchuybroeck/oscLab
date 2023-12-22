@@ -55,8 +55,8 @@ void datamgr_parse_room_sensor_map(FILE *fp_sensor_map) {
 
     int room_id, sensor_id;
     int insert_index = 0;
-
-    list = (dplist_t *) malloc(sizeof(dplist_t));
+    list = dpl_create(element_free);
+    //list = (dplist_t *) malloc(sizeof(dplist_t));
     //dummy_node->element = NULL;
     //list->head = dummy_node;
     //list->head = dummy_node;
@@ -194,16 +194,15 @@ int datamgr_get_total_sensors(){
 void *data_manager_thread() {
     // reading data from buffer via the sbuffer_read() function
     bool node_was_found;
-
+    sensor_data_t *data = (sensor_data_t *) malloc(sizeof(sensor_data_t));
     while(1){
-        sensor_data_t data;     // to save the data in
-        if(sbuffer_read(buffer, &data) != SBUFFER_SUCCESS){
+        if(sbuffer_read(buffer, data) != SBUFFER_SUCCESS){
             fprintf(stderr, "Error, in reading the buffer\n");
             break; // while loop stops if end or error is hit
         }
-        if(data.id < 1){
+        if(data->id < 1){
             char msg[55];
-            snprintf(msg, sizeof(msg), "Received sensor data with invalid sensor node ID %" PRIu16 "\n", data.id);
+            snprintf(msg, sizeof(msg), "Received sensor data with invalid sensor node ID %" PRIu16 "\n", data->id);
             write_to_log_process(msg);
         }
 
@@ -212,10 +211,10 @@ void *data_manager_thread() {
         node_was_found = false;
 
         while(current_node != NULL){
-            if(current_node->element->sensorId == data.id){
-                current_node->element->ts = data.ts;
+            if(current_node->element->sensorId == data->id){
+                current_node->element->ts = data->ts;
                 //adding value to the list with previous values
-                current_node->element->previousValues[index_value] = (data.value);
+                current_node->element->previousValues[index_value] = (data->value);
                 index_value++;
                 if(index_value > 4){
                     index_value = 0;
@@ -224,11 +223,11 @@ void *data_manager_thread() {
                 node_was_found = true;
                 // writing the log message
                 char msg[55];
-                if(data.value > datamgr_get_avg(current_node->element->sensorId)){
-                    snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " reports it’s too warm\n", data.id);
+                if(data->value > datamgr_get_avg(current_node->element->sensorId)){
+                    snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " reports it’s too warm\n", data->id);
 
                 }else{
-                    snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " reports it’s too cold\n", data.id);
+                    snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " reports it’s too cold\n", data->id);
                 }
                 write_to_log_process(msg);
                 break;
@@ -243,6 +242,7 @@ void *data_manager_thread() {
 
 
     }
+    free(data);
     return NULL;
 
 }

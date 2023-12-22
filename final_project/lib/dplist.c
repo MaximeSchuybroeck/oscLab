@@ -14,28 +14,23 @@
 
 
 
-
+/*
 dplist_t *dpl_create() {
     dplist_t *list = malloc(sizeof(struct dplist));
     list->head = NULL;
     return list;
 }
-/*
+*/
 dplist_t *dpl_create(// callback functions
-        void *(*element_copy)(void *src_element),
-        void (*element_free)(void **element),
-        int (*element_compare)(void *x, void *y)
+        void (*element_free)(void **element)
 ) {
     dplist_t *list = malloc(sizeof(struct dplist));
     list->head = NULL;
     //TODO: zien of dat dit niet weg moet
-    list->element_copy = (void *(*)(void **))element_copy;
-    //list->element_copy = element_copy;
     list->element_free = element_free;
-    list->element_compare = element_compare;
     return list;
 }
-*/
+
 void dpl_free(dplist_t **list, bool free_element) {
 
     if(*list == NULL){
