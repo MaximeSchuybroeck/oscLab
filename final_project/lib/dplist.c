@@ -74,6 +74,10 @@ dplist_t *dpl_insert_at_index(dplist_t *list, void *givenElement, int index, boo
         list->head = new_node;
     } else {
         dplist_node_t *node_at_index = dpl_get_reference_at_index(list, index);
+        new_node->next = node_at_index->next;
+        new_node->prev = node_at_index;
+        node_at_index->next = new_node;
+        /*
         if (node_at_index == NULL) {
             free(new_node);
             return list;
@@ -91,6 +95,7 @@ dplist_t *dpl_insert_at_index(dplist_t *list, void *givenElement, int index, boo
         if (new_node->next != NULL) {
             new_node->next->prev = new_node;
         }
+        */
     }
 
     return list;
@@ -114,7 +119,7 @@ dplist_t *dpl_insert_at_index(dplist_t *list, void *element, int index, bool ins
     }
     new_node->next = NULL;
     new_node->prev = NULL;
-    if (list->head == NULL || index <= 0) {
+    if (list->head == NULL) {
         // Insert at the beginning of the list
         new_node->next = list->head;
         if (list->head != NULL) {
@@ -170,6 +175,7 @@ dplist_t *dpl_remove_at_index(dplist_t *list, int index, bool free_element) {
         free(current_node);
         return list;
     }
+    //TODO: dpl_get_reference_at_index hier compatibel maken
     dplist_node_t *node_to_delete = dpl_get_reference_at_index(list, index);
     if (node_to_delete == NULL) {
         return list;
@@ -188,10 +194,11 @@ dplist_t *dpl_remove_at_index(dplist_t *list, int index, bool free_element) {
 }
 
 int dpl_size(dplist_t *list) {
-
+    /*
     if (list == NULL || list->head == NULL) {
         return 0;
     }
+     */
     int size = 1;
     dplist_node_t *current_node = list->head;
     while(current_node->next != NULL){
@@ -231,11 +238,13 @@ dplist_node_t *dpl_get_reference_at_index(dplist_t *list, int index) {
     if (list == NULL || list->head == NULL || index < 0) {
         return NULL;
     }
-
+    if(index == 0){
+        return list->head;
+    }
     int count = 0;
     dplist_node_t *current_node = list->head;
 
-    while (current_node != NULL && count < index) {
+    while (current_node->next != NULL && count < index) {
         current_node = current_node->next;
         count++;
     }

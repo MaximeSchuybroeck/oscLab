@@ -23,12 +23,10 @@ int log_pipe[2];
 FILE *log_file;
 int sequence_num = 0;
 
-///TODO: comments nog verwijderen
-// log_pipe[0] = reading
-// log_pipe[1] = writingS
 
 int write_to_log_process(char *msg){
-    write(log_pipe[1], msg, strlen(msg));
+    ///TODO: log file fixen
+    //write(log_pipe[1], msg, strlen(msg));
     return 0; // = success
 }
 
@@ -117,11 +115,11 @@ int main(int argc, char *argv[]) {
     // creating the threads
     pthread_t tid[3];
     pthread_create(&tid[0], NULL, (void *)start_connmgr, (void *) argv);
-    pthread_create(&tid[1], NULL, data_manager_thread, NULL);
+    //pthread_create(&tid[1], NULL, data_manager_thread, NULL);
     //pthread_create(&tid[2], NULL, storage_manager_thread, NULL);
 
     // joining the treads
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 1; i++) {
         pthread_join(tid[i], NULL);
     }
 

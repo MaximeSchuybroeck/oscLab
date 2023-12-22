@@ -15,10 +15,10 @@
 // global variable
 extern sbuffer_t *buffer;
 int8_t index_value = 0;
-static dplist_t *list;
+dplist_t *list;
 
-/*
-static void * element_copy(void *element){
+
+void * element_copy(void *element){
     element_t *copy = (element_t *) malloc(sizeof(element_t));
     if (copy == NULL) {
         exit(EXIT_FAILURE);
@@ -27,12 +27,12 @@ static void * element_copy(void *element){
     return (void *)copy;
 }
 
-static void element_free(void **element){
+void element_free(void **element){
     free(*element);
     *element = NULL;
 }
 
-static int element_compare(void *X, void *Y){
+int element_compare(void *X, void *Y){
     //checking if they are NULL
 
     element_t *x = (element_t *) X;
@@ -45,7 +45,7 @@ static int element_compare(void *X, void *Y){
         return 0;
     }else return -1;
 }
-*/
+
 void datamgr_parse_room_sensor_map(FILE *fp_sensor_map) {
     // checking if the file pointers are NULL
     if (fp_sensor_map == NULL) {
@@ -54,21 +54,25 @@ void datamgr_parse_room_sensor_map(FILE *fp_sensor_map) {
     }
 
     int room_id, sensor_id;
+    int insert_index = 0;
+
+    list = (dplist_t *) malloc(sizeof(dplist_t));
+    //dummy_node->element = NULL;
+    //list->head = dummy_node;
+    //list->head = dummy_node;
 
     // reading from the sensor map file
     while (fscanf(fp_sensor_map, "%d %d", &room_id, &sensor_id) == 2) {
+        // iserting scanned data in a new element
         element_t *new_element = (element_t *)malloc(sizeof(element_t));
-        if (new_element == NULL) {
-            fprintf(stderr, "Error allocating memory for new element\n");
-            exit(EXIT_FAILURE);
-        }
-
         new_element->roomId = room_id;
         new_element->sensorId = sensor_id;
 
         // add the new element to the list
-        list = dpl_insert_at_index(list, new_element, dpl_size(list), true);
-
+        list = dpl_insert_at_index(list, new_element, insert_index, false);
+        //list = dpl_insert_at_index(list, new_element, dpl_size(list) -1, false);
+        insert_index++;
+        //TODO: printf weg doen
         printf("Room ID: %d, Sensor ID: %d\n", room_id, sensor_id);
     }
 }
