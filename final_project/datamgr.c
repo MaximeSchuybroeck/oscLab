@@ -257,4 +257,3 @@ int datamgr_get_total_sensors(){
     return index_value + 1;
 }
 */
-

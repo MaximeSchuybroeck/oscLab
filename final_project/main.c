@@ -119,10 +119,10 @@ int main(int argc, char *argv[]) {
     pthread_t tid[3];
     pthread_create(&tid[0], NULL, (void *)start_connmgr, argv);
     pthread_create(&tid[1], NULL, data_manager_thread, NULL);
-    //pthread_create(&tid[2], NULL, storage_manager_thread, NULL);
+    pthread_create(&tid[2], NULL, storage_manager_thread, NULL);
 
     // joining the treads
-    for (int i = 0; i < 2; i++) {
+    for (int i = 0; i < 3; i++) {
         pthread_join(tid[i], NULL);
     }
 
