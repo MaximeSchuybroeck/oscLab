@@ -27,6 +27,12 @@ void *thread_runner(void *arg){
         result = tcp_receive(client, (void *) &data.ts, &bytes);
 
         if ((result == TCP_NO_ERROR) && bytes) {
+            // log message writen
+            char msg[55];
+            snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " has opened a new connection\n", data.id);
+            write_to_log_process(msg);
+
+            // inserting data in buffer
             sensor_data_t *new_data = malloc(sizeof(sensor_data_t));
             new_data->id = data.id;
             new_data->value = data.value;

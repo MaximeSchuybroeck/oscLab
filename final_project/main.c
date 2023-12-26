@@ -26,7 +26,7 @@ int sequence_num = 0;
 
 int write_to_log_process(char *msg){
     ///TODO: log file fixen want log file wordt gigabytes groot na het runnen
-    //write(log_pipe[1], msg, strlen(msg));
+    write(log_pipe[1], msg, strlen(msg));
     return 0; // = success
 }
 
@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
     //pthread_create(&tid[2], NULL, storage_manager_thread, NULL);
 
     // joining the treads
-    for (int i = 0; i < 1; i++) {
+    for (int i = 0; i < 2; i++) {
         pthread_join(tid[i], NULL);
     }
 
