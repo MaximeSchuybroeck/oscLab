@@ -37,6 +37,7 @@ void *thread_runner(void *arg){
             new_data->id = data.id;
             new_data->value = data.value;
             new_data->ts = data.ts;
+            new_data->read_by_datamgr = false;
             if(sbuffer_insert(buffer,new_data)== SBUFFER_SUCCESS){
                 //TODO END: printf nog weg en sbuffer_insert uit if functie halen
                 printf("sensor id = %" PRIu16 " - temperature = %g - timestamp = %ld\n", data.id, data.value,
@@ -93,6 +94,15 @@ void *start_connmgr(char *argv[]) {
         pthread_join(threads[conn_counter], NULL);
     }
 
+    // end-of-stream marker
+    sensor_data_t *data = (sensor_data_t *) malloc(sizeof(sensor_data_t));
+    data->id = 0;
+    data->read_by_datamgr = false;
+    if (sbuffer_insert(buffer, data) != SBUFFER_SUCCESS) {
+        fprintf(stderr, "Error in inserting the end-of-stream marker into the buffer\n");
+        exit(EXIT_FAILURE);
+    }
+    free(data);
     return 0;
 }
 // oude conmgr.c
@@ -124,7 +134,7 @@ void *thread_runner(void *arg) {
             snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " has opened a new connection\n", data->id);
             write_to_log_process(msg);
             break;
-            //TODO: printf weg doen
+            //TODO END: printf weg doen
             //printf("sensor id = %" PRIu16 " - temperature = %f - timestamp = %ld\n", data->id, data->value,
             //        (long int) data->ts);
         }
@@ -137,7 +147,7 @@ void *thread_runner(void *arg) {
 
         printf("Peer has closed connection\n");
     } else {
-        //TODO: checken of dit oke is
+        //TODO END: checken of dit oke is
         printf("Error connmgr in thread_runner: occurred on connection to peer\n");
     }
 

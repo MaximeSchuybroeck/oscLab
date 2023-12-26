@@ -14,7 +14,6 @@
 
 // global variable
 extern sbuffer_t *buffer;
-int8_t index_value = 0;
 dplist_t *list;
 
 
@@ -34,7 +33,6 @@ void element_free(void **element){
 
 int element_compare(void *X, void *Y){
     //checking if they are NULL
-
     element_t *x = (element_t *) X;
     element_t *y = (element_t *) Y;
     if(x->sensorId == 0 || y->sensorId == 0){
@@ -60,7 +58,7 @@ void datamgr_parse_room_sensor_map(FILE *fp_sensor_map) {
     // reading from the sensor map file
     while (fscanf(fp_sensor_map, "%d %d", &room_id, &sensor_id) == 2) {
         // iserting scanned data in a new element
-        element_t *new_element = (element_t *)malloc(sizeof(element_t));
+        element_t *new_element = malloc(sizeof(element_t));
         new_element->roomId = room_id;
         new_element->sensorId = sensor_id;
 
@@ -68,37 +66,41 @@ void datamgr_parse_room_sensor_map(FILE *fp_sensor_map) {
             new_element->previousValues[i] = 0;
         }
 
-
         // add the new element to the list
         list = dpl_insert_at_index(list, new_element, insert_index, false);
-        //list = dpl_insert_at_index(list, new_element, dpl_size(list) -1, false);
+        //TODO: mischien insert_copy wel op true zetten --> zie 2todos hieronder
         insert_index++;
-        //TODO: printf weg doen
+        //TODO END: printf weg doen
         printf("Room ID: %d, Sensor ID: %d\n", room_id, sensor_id);
     }
-}
-
-
-
-void add_sensor_value(sensor_data_t *valueList[RUN_AVG_LENGTH], sensor_data_t *value){
-    valueList[index_value] = value;
-    index_value++;
-    if(index_value > 4){
-        index_value = 0;
-    }
+    //TODO: nog element free afh van insert_copy hierboven --> als true dan moet ik freeen anders niet
+    //free(new_element)
 }
 
 sensor_value_t calculate_avg(sensor_value_t valueList[RUN_AVG_LENGTH]){
     sensor_value_t total = 0.0;
-    sensor_value_t number_in_list = 0.0;
+    sensor_value_t index = 0.0;
     for (int i = 0; i < RUN_AVG_LENGTH; i++){
         if(valueList[i] == 0){
             break;
         }
         total = total + valueList[i];
-        number_in_list = number_in_list + 1.0;
+        index = index + 1.0;
     }
-    return total/number_in_list;
+    return total/index;
+}
+
+
+int get_valuelist_size(sensor_value_t valueList[RUN_AVG_LENGTH]){
+    int size = 0;
+    for(int i = 0; i < RUN_AVG_LENGTH; i++){
+        if(valueList[i] == 0){
+            break;
+        }else{
+            size++;
+        }
+    }
+    return size;
 }
 
 
@@ -106,6 +108,64 @@ void datamgr_free(){
     dpl_free(&list, true);
 }
 
+void *data_manager_thread() {
+    // reading data from buffer via the sbuffer_read() function
+    bool node_was_found;
+    sensor_data_t *data = (sensor_data_t *) malloc(sizeof(sensor_data_t));
+    while(1){
+        //if(sbuffer_read(buffer, data) != SBUFFER_SUCCESS){
+        if(sbuffer_remove(buffer, data) != SBUFFER_SUCCESS){
+            fprintf(stderr, " Datamgr Error, in reading the buffer\n");
+            break; // while loop stops if end or error is hit
+        }
+        /*
+         *  //TODO: zien wa ik hiermee doe
+        if(data->id < 1){
+            char msg[55];
+            snprintf(msg, sizeof(msg), "Received sensor data with invalid sensor node ID %" PRIu16 "\n", data->id);
+            write_to_log_process(msg);
+        }
+         */
+
+        // updating the dplist
+        dplist_node_t *current_node = list->head;
+        node_was_found = false;
+
+        while(current_node != NULL){
+            if(current_node->element->sensorId == data->id){
+                current_node->element->ts = data->ts;
+                //adding value to the list with previous values
+                current_node->element->previousValues[get_valuelist_size(current_node->element->previousValues)] = data->value;
+
+                node_was_found = true;
+                // writing the log message
+                char msg[55];
+                if(data->value > calculate_avg(current_node->element->previousValues)){
+                    snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " reports it’s too warm\n", data->id);
+
+                }else{
+                    snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " reports it’s too cold\n", data->id);
+                }
+                write_to_log_process(msg);
+                break;
+            }
+            current_node = current_node->next;
+        }
+
+        // checking if the node was found
+        if(!node_was_found){
+            //TODO: botst end-of-stream marker --> dus iet me doen of ni
+            fprintf(stderr, "Error, sensor %" PRIu16 " was not found in de dplist\n", data->id);
+        }
+    }
+    free(data);
+    return NULL;
+
+}
+
+
+
+/*
 room_id_t datamgr_get_room_id(sensor_id_t sensor_id){
     // checking if given sensor_id is valid
     if(sensor_id <= 0){
@@ -123,7 +183,7 @@ room_id_t datamgr_get_room_id(sensor_id_t sensor_id){
     }
     return -1;
 }
-/*
+
 sensor_value_t datamgr_get_avg(sensor_id_t sensor_id){
     // checking if given sensor_id is valid
     if(sensor_id <= 0){
@@ -150,7 +210,7 @@ sensor_value_t datamgr_get_avg(sensor_id_t sensor_id){
     }
     return -1.0;
 }
-*/
+
 time_t datamgr_get_last_modified(sensor_id_t sensor_id){
     // checking if given sensor_id is valid
     if(sensor_id <= 0){
@@ -196,59 +256,5 @@ int datamgr_get_total_sensors(){
     }
     return index_value + 1;
 }
+*/
 
-void *data_manager_thread() {
-    // reading data from buffer via the sbuffer_read() function
-    bool node_was_found;
-    sensor_data_t *data = (sensor_data_t *) malloc(sizeof(sensor_data_t));
-    while(1){
-        if(sbuffer_read(buffer, data) != SBUFFER_SUCCESS){
-            fprintf(stderr, "Error, in reading the buffer\n");
-            break; // while loop stops if end or error is hit
-        }
-        if(data->id < 1){
-            char msg[55];
-            snprintf(msg, sizeof(msg), "Received sensor data with invalid sensor node ID %" PRIu16 "\n", data->id);
-            write_to_log_process(msg);
-        }
-
-        // updating the dplist
-        dplist_node_t *current_node = list->head;
-        node_was_found = false;
-
-        while(current_node != NULL){
-            if(current_node->element->sensorId == data->id){
-                current_node->element->ts = data->ts;
-                //adding value to the list with previous values
-                current_node->element->previousValues[index_value] = (data->value);
-                index_value++;
-                if(index_value > 4){
-                    index_value = 0;
-                }
-
-                node_was_found = true;
-                // writing the log message
-                char msg[55];
-                if(data->value > calculate_avg(current_node->element->previousValues)){
-                    snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " reports it’s too warm\n", data->id);
-
-                }else{
-                    snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " reports it’s too cold\n", data->id);
-                }
-                write_to_log_process(msg);
-                break;
-            }
-            current_node = current_node->next;
-        }
-
-        // checking if the node was found
-        if(!node_was_found){
-            fprintf(stderr, "Error, sensor was not found in de dplist\n");
-        }
-
-
-    }
-    free(data);
-    return NULL;
-
-}

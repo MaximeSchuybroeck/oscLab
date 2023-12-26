@@ -36,19 +36,17 @@
  */
 void datamgr_parse_room_sensor_map(FILE *fp_sensor_map);
 
-/**
- * This method adds a value to the preious sensor value array and deletes the last added element in the array
- * @param valueList the array with the previous values
- * @param value the value that need to be added to the list
- */
-void add_sensor_value(sensor_data_t *valueList[RUN_AVG_LENGTH], sensor_data_t *value);
+
 
 /**
  * This method calculates the average of the values inside of the array
  * @param valueList the array with the previous values
  * @return the average
  */
-sensor_value_t calculate_avg(double valueList[RUN_AVG_LENGTH]);
+sensor_value_t calculate_avg(sensor_value_t valueList[RUN_AVG_LENGTH]);
+
+int get_valuelist_size(sensor_value_t valueList[RUN_AVG_LENGTH]);
+
 
 /**
  * This method should be called to clean up the datamgr, and to free all used memory. 

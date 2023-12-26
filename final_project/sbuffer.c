@@ -59,10 +59,23 @@ int sbuffer_remove(sbuffer_t *buffer, sensor_data_t *data) {
     sbuffer_node_t *dummy;
     if (buffer == NULL) return SBUFFER_FAILURE;
     pthread_mutex_lock(&thread_mutex);
+    while (buffer->head == NULL){
+        pthread_cond_wait(&wait_condition, &thread_mutex);
+    }
     if (buffer->head == NULL) {
         pthread_mutex_unlock(&thread_mutex);
         return SBUFFER_NO_DATA;
     }
+    *data = buffer->head->data;
+    dummy = buffer->head;
+    if (buffer->head == buffer->tail) // buffer has only one node
+    {
+        buffer->head = buffer->tail = NULL;
+    } else  // buffer has many nodes empty
+    {
+        buffer->head = buffer->head->next;
+    }
+    /*
     if(buffer->head->data.read_by_datamgr){
         *data = buffer->head->data;
         dummy = buffer->head;
@@ -74,6 +87,7 @@ int sbuffer_remove(sbuffer_t *buffer, sensor_data_t *data) {
             buffer->head = buffer->head->next;
         }
     }
+     */
     free(dummy);
     pthread_mutex_unlock(&thread_mutex);
     return SBUFFER_SUCCESS;
@@ -88,12 +102,8 @@ int sbuffer_read(sbuffer_t *buffer, sensor_data_t *data) {
         pthread_cond_wait(&wait_condition, &thread_mutex);
     }
 
-    if (buffer->head == NULL) {
-        pthread_mutex_unlock(&thread_mutex);
-        return SBUFFER_NO_DATA;
-    }
-    buffer->head->data.read_by_datamgr = true;
     *data = buffer->head->data;
+    buffer->head->data.read_by_datamgr = true;
     pthread_mutex_unlock(&thread_mutex);
     return SBUFFER_SUCCESS;
 }

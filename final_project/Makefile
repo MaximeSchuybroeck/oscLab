@@ -68,14 +68,14 @@ debug : main.c datamgr.c connmgr.c sbuffer.c sensor_db.c lib/dplist.c lib/tcpsoc
 	#gdb --args ./sensor_gateway 5678 3
 	gcc -g main.c datamgr.c  connmgr.c sbuffer.c sensor_db.c lib/dplist.c lib/tcpsock.c -o debug.out
 
-runclients: sensor_node.c runclient1 runclient2 runclient3
+rungateway: sensor_gateway
+	./sensor_gateway 5678 3
 
+runclient1: sensor_node
+	./sensor_node 1 2 127.0.0.1 5678
 
-runclient1: sensor_node.c
-	./sensor_node 15 4 127.0.0.1 5678
-
-runclient2: sensor_node.c
-	./sensor_node 21 4 127.0.0.1 5678
+runclient2: sensor_node
+	./sensor_node 2 5 127.0.0.1 5678
 
 runclient3: sensor_node.c
 	./sensor_node 37 5 127.0.0.1 5678

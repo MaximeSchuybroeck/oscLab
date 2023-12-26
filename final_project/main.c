@@ -22,11 +22,14 @@ FILE* csv_file;
 int log_pipe[2];
 FILE *log_file;
 int sequence_num = 0;
+//pthread_mutex_t log_mutex;
 
 
 int write_to_log_process(char *msg){
+    //pthread_mutex_lock(&log_mutex);
     ///TODO: log file fixen want log file wordt gigabytes groot na het runnen
     write(log_pipe[1], msg, strlen(msg));
+    //pthread_mutex_unlock(&log_mutex);
     return 0; // = success
 }
 
@@ -115,7 +118,7 @@ int main(int argc, char *argv[]) {
     // creating the threads
     pthread_t tid[3];
     pthread_create(&tid[0], NULL, (void *)start_connmgr, argv);
-    //pthread_create(&tid[1], NULL, data_manager_thread, NULL);
+    pthread_create(&tid[1], NULL, data_manager_thread, NULL);
     //pthread_create(&tid[2], NULL, storage_manager_thread, NULL);
 
     // joining the treads
