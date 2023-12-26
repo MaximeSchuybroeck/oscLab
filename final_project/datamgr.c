@@ -113,50 +113,55 @@ void *data_manager_thread() {
     bool node_was_found;
     sensor_data_t *data = (sensor_data_t *) malloc(sizeof(sensor_data_t));
     while(1){
-        //if(sbuffer_read(buffer, data) != SBUFFER_SUCCESS){
-        if(sbuffer_remove(buffer, data) != SBUFFER_SUCCESS){
-            fprintf(stderr, " Datamgr Error, in reading the buffer\n");
-            break; // while loop stops if end or error is hit
-        }
-        /*
-         *  //TODO: zien wa ik hiermee doe
-        if(data->id < 1){
-            char msg[55];
-            snprintf(msg, sizeof(msg), "Received sensor data with invalid sensor node ID %" PRIu16 "\n", data->id);
-            write_to_log_process(msg);
-        }
-         */
+        int result = sbuffer_read(buffer, data);
+        if(result != SBUFFER_NOT_YET_READ){
+            if(result != SBUFFER_SUCCESS){
+                printf("!!!!!! hier geraakt !!!!!!!!!!!!\n");
+                fprintf(stderr, " Datamgr Error, in reading the buffer\n");
+                break; // while loop stops if end or error is hit
+            }
 
-        // updating the dplist
-        dplist_node_t *current_node = list->head;
-        node_was_found = false;
-
-        while(current_node != NULL){
-            if(current_node->element->sensorId == data->id){
-                current_node->element->ts = data->ts;
-                //adding value to the list with previous values
-                current_node->element->previousValues[get_valuelist_size(current_node->element->previousValues)] = data->value;
-
-                node_was_found = true;
-                // writing the log message
+            //TODO: zien wa ik hiermee doe
+            if(data->id < 1){
                 char msg[55];
-                if(data->value > calculate_avg(current_node->element->previousValues)){
-                    snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " reports it’s too warm\n", data->id);
-
-                }else{
-                    snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " reports it’s too cold\n", data->id);
-                }
+                snprintf(msg, sizeof(msg), "Received end-of-stream marker with sensor ID %" PRIu16 "\n", data->id);
                 write_to_log_process(msg);
+                printf("!!!!!!!!!!!!!!!!!!!!!!!!!!! OEF GERAAKT EN NU IST GEDAAN !!!!!!!!!!!!!!!!!!!!!!!!");
                 break;
             }
-            current_node = current_node->next;
-        }
 
-        // checking if the node was found
-        if(!node_was_found){
-            //TODO: botst end-of-stream marker --> dus iet me doen of ni
-            fprintf(stderr, "Error, sensor %" PRIu16 " was not found in de dplist\n", data->id);
+            // updating the dplist
+            dplist_node_t *current_node = list->head;
+            node_was_found = false;
+
+            while(current_node != NULL){
+                if(current_node->element->sensorId == data->id){
+                    current_node->element->ts = data->ts;
+                    //adding value to the list with previous values
+                    current_node->element->previousValues[get_valuelist_size(current_node->element->previousValues)] = data->value;
+
+                    node_was_found = true;
+                    // writing the log message
+                    char msg[55];
+                    if(data->value > calculate_avg(current_node->element->previousValues)){
+                        snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " reports it’s too warm\n", data->id);
+
+                    }else{
+                        snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " reports it’s too cold\n", data->id);
+                    }
+                    write_to_log_process(msg);
+                    break;
+                }
+                current_node = current_node->next;
+            }
+
+            // checking if the node was found
+            if(!node_was_found){
+                //TODO: botst end-of-stream marker --> dus iet me doen of ni
+                fprintf(stderr, "Error, sensor %" PRIu16 " was not found in de dplist\n", data->id);
+            }
         }
+        // sbuffer is nog niet compleet dus moet die even wachten
     }
     free(data);
     return NULL;

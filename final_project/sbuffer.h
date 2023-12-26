@@ -10,6 +10,7 @@
 #define SBUFFER_FAILURE -1
 #define SBUFFER_SUCCESS 0
 #define SBUFFER_NO_DATA 1
+#define SBUFFER_NOT_YET_READ 2
 
 typedef struct sbuffer sbuffer_t;
 

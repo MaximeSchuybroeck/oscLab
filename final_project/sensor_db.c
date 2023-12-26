@@ -73,12 +73,14 @@ void* storage_manager_thread() {
     // reading data from buffer via the sbuffer_remove()
     sensor_data_t *data = (sensor_data_t *) malloc(sizeof(sensor_data_t));
     while(1){
-        if(sbuffer_remove(buffer, data) != SBUFFER_SUCCESS){
-            break; // while loop stops if end or error is hit
+        int result = sbuffer_remove(buffer, data);
+        if(result == SBUFFER_SUCCESS){
+            // writing to the CSV file
+            insert_sensor(data->id, data->value, data->ts);
+        }else if(result != SBUFFER_NOT_YET_READ){
+            break;
         }
 
-        // writing to the CSV file
-        insert_sensor(data->id, data->value, data->ts);
     }
     free(data);
     return NULL;
