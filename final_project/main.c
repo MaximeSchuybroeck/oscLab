@@ -25,7 +25,7 @@ int sequence_num = 0;
 
 
 int write_to_log_process(char *msg){
-    ///TODO: log file fixen
+    ///TODO: log file fixen want log file wordt gigabytes groot na het runnen
     //write(log_pipe[1], msg, strlen(msg));
     return 0; // = success
 }
@@ -89,7 +89,7 @@ int end_log_process(){
 int main(int argc, char *argv[]) {
     // first checking if the provided arguments are right
     if(argc < 3) {
-        printf("Please provide the right arguments: first the port, then the max nb of clients\n");
+        printf("Please provide the right arguments: first the port, then the max nb of clients");
         return -1;
     }
 
@@ -101,7 +101,7 @@ int main(int argc, char *argv[]) {
 
     // starting the logger
     if(create_log_process() != 0){
-        fprintf(stderr, "Failed ending the log process\n");
+        fprintf(stderr, "Failed starting the log process\n");
     }
 
     // setting up the data manager
@@ -114,7 +114,7 @@ int main(int argc, char *argv[]) {
 
     // creating the threads
     pthread_t tid[3];
-    pthread_create(&tid[0], NULL, (void *)start_connmgr, (void *) argv);
+    pthread_create(&tid[0], NULL, (void *)start_connmgr, argv);
     //pthread_create(&tid[1], NULL, data_manager_thread, NULL);
     //pthread_create(&tid[2], NULL, storage_manager_thread, NULL);
 

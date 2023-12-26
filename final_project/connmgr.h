@@ -28,6 +28,6 @@ void *thread_runner(void *arg);
  * @param argv
  * @return
  */
-void *start_connmgr(void *argv[]);
+void *start_connmgr(char *argv[]);
 
 #endif  //_CONNMGR_H_
