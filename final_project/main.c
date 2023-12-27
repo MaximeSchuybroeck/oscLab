@@ -22,14 +22,11 @@ FILE* csv_file;
 int log_pipe[2];
 FILE *log_file;
 int sequence_num = 0;
-//pthread_mutex_t log_mutex;
+pthread_mutex_t log_mutex;
 
 
 int write_to_log_process(char *msg){
-    //pthread_mutex_lock(&log_mutex);
-    ///TODO: log file fixen want log file wordt gigabytes groot na het runnen
     write(log_pipe[1], msg, strlen(msg));
-    //pthread_mutex_unlock(&log_mutex);
     return 0; // = success
 }
 
@@ -47,7 +44,7 @@ int create_log_process(){
         return -1;
     } else if(pid == 0){    // = child process
         // Closing the writing process
-        close(log_pipe[1]);
+        //close(log_pipe[1]);
 
         // opening the log_file
         log_file = fopen("gateway.log", "a"); //append mode
@@ -70,8 +67,8 @@ int create_log_process(){
             sequence_num++;
         }
 
-
         // closing the log log_file
+        fprintf(log_file,"\n");
         fclose(log_file);
 
     }

@@ -15,7 +15,7 @@ extern sbuffer_t *buffer;
 
 
 FILE * open_db(char * filename, bool append){
-    db = fopen(filename, append ? "a" : "w");
+    db = fopen(filename, append ? "a" : "w+");
 
     // checking if the file is empty
     if(db == NULL){
@@ -76,6 +76,10 @@ void* storage_manager_thread() {
         int result = sbuffer_remove(buffer, data);
         if(result == SBUFFER_SUCCESS){
             // writing to the CSV file
+            if(data->id == 0){
+                //end-of-stream marker reached
+                break;
+            }
             insert_sensor(data->id, data->value, data->ts);
         }else if(result != SBUFFER_NOT_YET_READ){
             break;
@@ -85,20 +89,3 @@ void* storage_manager_thread() {
     free(data);
     return NULL;
 }
-/*
-void* storage_manager_thread() {
-    // reading data from buffer via the sbuffer_remove()
-    sensor_data_t *data = (sensor_data_t *) malloc(sizeof(sensor_data_t));
-    while(1){
-        int result = sbuffer_remove(buffer, data);
-        if(result == SBUFFER_SUCCESS){
-            // writing to the CSV file
-            insert_sensor(data->id, data->value, data->ts);
-        } else if(result != SBUFFER_NOT_YET_READ){
-            break;
-        }
-    }
-    free(data);
-    return NULL;
-}
- */
