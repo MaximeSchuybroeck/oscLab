@@ -8,21 +8,18 @@
 #include <string.h>
 #include "datamgr.h"
 #include "connmgr.h"
-#include <stdbool.h>
 #include "sensor_db.h"
 #include "config.h"
 #include <unistd.h>
 #include <time.h>
-#include <stdlib.h>
 
 
 // global variables
 sbuffer_t *buffer;
-FILE* csv_file;
+//FILE *log_file;
 int log_pipe[2];
-FILE *log_file;
 int sequence_num = 0;
-pthread_mutex_t log_mutex;
+//pthread_mutex_t log_mutex;
 
 
 int write_to_log_process(char *msg){
@@ -47,7 +44,7 @@ int create_log_process(){
         //close(log_pipe[1]);
 
         // opening the log_file
-        log_file = fopen("gateway.log", "a"); //append mode
+        FILE *log_file = fopen("gateway.log", "w");
         if(log_file == NULL){
             printf("Error in opening the log_file because it is EMPTY\n");
             return -1;
@@ -67,7 +64,7 @@ int create_log_process(){
             sequence_num++;
         }
 
-        // closing the log log_file
+        // closing the log_file
         fprintf(log_file,"\n");
         fclose(log_file);
 
@@ -82,7 +79,6 @@ int end_log_process(){
     close(log_pipe[1]);
     return 0;
 }
-// logging function end
 
 
 
@@ -105,12 +101,10 @@ int main(int argc, char *argv[]) {
     }
 
     // setting up the data manager
-    FILE *fp_sensor_map = fopen("room_sensor.map", "r");
-    datamgr_parse_room_sensor_map(fp_sensor_map);
+    datamgr_parse_room_sensor_map();
 
     // setting up the storage manager
-
-    csv_file = open_db("data.csv", false);
+    open_db();
 
     // creating the threads
     pthread_t tid[3];
@@ -124,14 +118,11 @@ int main(int argc, char *argv[]) {
     }
 
     // closing CSV file
-    close_db(csv_file);
+    close_db();
     // freeing the buffer
     sbuffer_free(&buffer);
     // freeing the list
     datamgr_free();
     // closing the logger process
-    if(end_log_process() != 0){
-        fprintf(stderr, "Failed ending the log process\n");
-    }
-
+    end_log_process();
 }

@@ -3,7 +3,6 @@
  */
 
 #include <stdio.h>
-#include <stdbool.h>
 #include "config.h"
 #include "sensor_db.h"
 #include "sbuffer.h"
@@ -14,20 +13,19 @@ FILE *db;
 extern sbuffer_t *buffer;
 
 
-FILE * open_db(char * filename, bool append){
-    db = fopen(filename, append ? "a" : "w+");
+int open_db(){
+    db = fopen("data.csv", "w");
 
     // checking if the file is empty
     if(db == NULL){
         printf("Error in opening the db file because it is EMPTY\n");
-        return db;
+        return -1;
     }
 
     // logging
     char *msg = "A new data.csv file has been created.\n";
     write_to_log_process(msg);
-
-    return db;
+    return 0;
 }
 
 int insert_sensor(sensor_id_t id, sensor_value_t value, sensor_ts_t ts){
@@ -52,20 +50,19 @@ int insert_sensor(sensor_id_t id, sensor_value_t value, sensor_ts_t ts){
     return 0;
 }
 
-int close_db(FILE * f){
+int close_db(){
     // checking if the file is empty
-    if(f == NULL){
+    if(db == NULL){
         printf("Error in opening the file because it is EMPTY\n");
         return -1;
     }
     // closing the file
-    fclose(f);
+    fclose(db);
 
     // logging
     char msg[55];
     snprintf(msg, sizeof(msg), "The data.csv file has been closed\n");
     write_to_log_process(msg);
-
     return 0;
 }
 

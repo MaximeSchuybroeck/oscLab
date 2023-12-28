@@ -1,126 +1,68 @@
-0 - Wed Dec 27 01:49:29 2023 - A new data.csv file has been created.
-1 - Wed Dec 27 01:49:32 2023 - Sensor node 15 has opened a new connection
-2 - Wed Dec 27 01:49:34 2023 - Sensor node 15 has opened a new connection
-3 - Wed Dec 27 01:49:34 2023 - Sensor node 15 reports it’s too cold
-Sensor node 15 reports it’s too cold
-4 - Wed Dec 27 01:49:34 2023 - Data insertion from sensor 15 succeeded
-5 - Wed Dec 27 01:49:34 2023 - Data insertion from sensor 15 succeeded
-6 - Wed Dec 27 01:49:34 2023 - Sensor node 21 has opened a new connection
-7 - Wed Dec 27 01:49:34 2023 - Sensor node 21 reports it’s too cold
-8 - Wed Dec 27 01:49:35 2023 - Sensor node 15 has opened a new connection
+0 - Thu Dec 28 22:21:37 2023 - A new data.csv file has been created.
+1 - Thu Dec 28 22:21:40 2023 - Sensor node 15 has opened a new connection
+2 - Thu Dec 28 22:21:41 2023 - Sensor node 15 has opened a new connection
+3 - Thu Dec 28 22:21:41 2023 - Sensor node 15 reports it’s too cold
+Sensor node 15 reports it’s too warm
+4 - Thu Dec 28 22:21:41 2023 - Data insertion from sensor 15 succeeded
+5 - Thu Dec 28 22:21:41 2023 - Data insertion from sensor 15 succeeded
+6 - Thu Dec 28 22:21:42 2023 - Sensor node 15 has opened a new connection
+7 - Thu Dec 28 22:21:42 2023 - Sensor node 21 has opened a new connection
+Sensor node 15 reports it’s too warm
+Sensor node 21 reports it’s too cold
+Data insertion from sensor 15 succeeded
 Data insertion from sensor 21 succeeded
-9 - Wed Dec 27 01:49:35 2023 - Sensor node 15 reports it’s too cold
-10 - Wed Dec 27 01:49:35 2023 - Data insertion from sensor 15 succeeded
-11 - Wed Dec 27 01:49:36 2023 - Sensor node 15 has opened a new connection
-12 - Wed Dec 27 01:49:36 2023 - Sensor node 37 has opened a new connection
-13 - Wed Dec 27 01:49:36 2023 - Sensor node 15 reports it’s too warm
+8 - Thu Dec 28 22:21:43 2023 - Sensor node 15 has opened a new connection
+9 - Thu Dec 28 22:21:45 2023 - Sensor node 15 has opened a new connection
+Sensor node 15 reports it’s too warm
+Sensor node 15 reports it’s too warm
+Data insertion from sensor 15 succeeded
+Data insertion from sensor 15 succeeded
+10 - Thu Dec 28 22:21:45 2023 - Sensor node 37 has opened a new connection
+11 - Thu Dec 28 22:21:45 2023 - Sensor node 37 reports it’s too cold
+12 - Thu Dec 28 22:21:46 2023 - Sensor node 21 has opened a new connection
+13 - Thu Dec 28 22:21:46 2023 - Data insertion from sensor 37 succeeded
+14 - Thu Dec 28 22:21:47 2023 - Sensor node 15 has opened a new connection
+15 - Thu Dec 28 22:21:47 2023 - Sensor node 21 reports it’s too cold
+16 - Thu Dec 28 22:21:47 2023 - Sensor node 15 reports it’s too warm
+17 - Thu Dec 28 22:21:47 2023 - Sensor node 37 has opened a new connection
 Sensor node 37 reports it’s too cold
-14 - Wed Dec 27 01:49:36 2023 - Data insertion from sensor 15 succeeded
+18 - Thu Dec 28 22:21:48 2023 - Data insertion from sensor 21 succeeded
+Data insertion from sensor 15 succeeded
 Data insertion from sensor 37 succeeded
-15 - Wed Dec 27 01:49:37 2023 - Sensor node 15 has opened a new connection
-16 - Wed Dec 27 01:49:37 2023 - Sensor node 21 has opened a new connection
-17 - Wed Dec 27 01:49:37 2023 - Sensor node 15 reports it’s too warm
-Sensor node 21 reports it’s too warm
-18 - Wed Dec 27 01:49:37 2023 - Data insertion from sensor 15 succeeded
+19 - Thu Dec 28 22:21:48 2023 - Sensor node 15 has opened a new connection
+20 - Thu Dec 28 22:21:50 2023 - Sensor node 21 has opened a new connection
+21 - Thu Dec 28 22:21:50 2023 - Sensor node 15 has opened a new connection
+22 - Thu Dec 28 22:21:50 2023 - Sensor node 37 has opened a new connection
+23 - Thu Dec 28 22:21:50 2023 - Sensor node 15 reports it’s too warm
+Sensor node 21 reports it’s too cold
+Sensor node 37 reports it’s too warm
+Sensor node 15 reports it’s too warm
+24 - Thu Dec 28 22:21:50 2023 - Data insertion from sensor 15 succeeded
 Data insertion from sensor 21 succeeded
-19 - Wed Dec 27 01:49:38 2023 - Sensor node 15 has opened a new connection
-20 - Wed Dec 27 01:49:38 2023 - Sensor node 37 has opened a new connection
-21 - Wed Dec 27 01:49:38 2023 - Sensor node 15 reports it’s too cold
+Data insertion from sensor 37 succeeded
+Data insertion from sensor 15 succeeded
+25 - Thu Dec 28 22:21:51 2023 - Sensor node 15 has opened a new connection
+26 - Thu Dec 28 22:21:52 2023 - Sensor node 15 has opened a new connection
+27 - Thu Dec 28 22:21:52 2023 - Sensor node 15 reports it’s too warm
+Sensor node 15 reports it’s too warm
+28 - Thu Dec 28 22:21:52 2023 - Sensor node 37 has opened a new connection
 Sensor node 37 reports it’s too cold
-22 - Wed Dec 27 01:49:38 2023 - Data insertion from sensor 15 succeeded
-23 - Wed Dec 27 01:49:38 2023 - Data insertion from sensor 37 succeeded
-24 - Wed Dec 27 01:49:39 2023 - Sensor node 15 has opened a new connection
-25 - Wed Dec 27 01:49:40 2023 - Sensor node 15 has opened a new connection
-26 - Wed Dec 27 01:49:40 2023 - Sensor node 15 reports it’s too cold
-27 - Wed Dec 27 01:49:40 2023 - Sensor node 15 reports it’s too cold
-28 - Wed Dec 27 01:49:40 2023 - Data insertion from sensor 15 succeeded
-29 - Wed Dec 27 01:49:40 2023 - Data insertion from sensor 15 succeeded
-30 - Wed Dec 27 01:49:40 2023 - Sensor node 21 has opened a new connection
-31 - Wed Dec 27 01:49:40 2023 - Sensor node 37 has opened a new connection
-32 - Wed Dec 27 01:49:40 2023 - Sensor node 21 reports it’s too warm
-33 - Wed Dec 27 01:49:40 2023 - Sensor node 37 reports it’s too cold
-34 - Wed Dec 27 01:49:40 2023 - Data insertion from sensor 21 succeeded
+29 - Thu Dec 28 22:21:52 2023 - Data insertion from sensor 15 succeeded
+Data insertion from sensor 15 succeeded
 Data insertion from sensor 37 succeeded
-35 - Wed Dec 27 01:49:41 2023 - Sensor node 15 has opened a new connection
-36 - Wed Dec 27 01:49:42 2023 - Sensor node 15 has opened a new connection
-37 - Wed Dec 27 01:49:42 2023 - Sensor node 15 reports it’s too cold
-Sensor node 15 reports it’s too cold
-38 - Wed Dec 27 01:49:42 2023 - Data insertion from sensor 15 succeeded
-39 - Wed Dec 27 01:49:42 2023 - Data insertion from sensor 15 succeeded
-40 - Wed Dec 27 01:49:42 2023 - Sensor node 37 has opened a new connection
-41 - Wed Dec 27 01:49:43 2023 - Sensor node 15 has opened a new connection
-42 - Wed Dec 27 01:49:43 2023 - Sensor node 37 reports it’s too warm
-Sensor node 15 reports it’s too cold
+30 - Thu Dec 28 22:21:53 2023 - Sensor node 21 has opened a new connection
+Sensor node 15 has opened a new connection
+31 - Thu Dec 28 22:21:53 2023 - Sensor node 21 reports it’s too warm
+32 - Thu Dec 28 22:21:53 2023 - Sensor node 15 reports it’s too warm
+33 - Thu Dec 28 22:21:53 2023 - Data insertion from sensor 21 succeeded
+34 - Thu Dec 28 22:21:53 2023 - Data insertion from sensor 15 succeeded
+35 - Thu Dec 28 22:21:54 2023 - Sensor node 15 has opened a new connection
+36 - Thu Dec 28 22:21:54 2023 - Sensor node 15 reports it’s too warm
+37 - Thu Dec 28 22:21:54 2023 - Sensor node 37 has opened a new connection
+38 - Thu Dec 28 22:21:54 2023 - Sensor node 37 reports it’s too cold
+39 - Thu Dec 28 22:21:54 2023 - Data insertion from sensor 15 succeeded
 Data insertion from sensor 37 succeeded
-43 - Wed Dec 27 01:49:43 2023 - Data insertion from sensor 15 succeeded
-44 - Wed Dec 27 01:49:43 2023 - Sensor node 21 has opened a new connection
-45 - Wed Dec 27 01:49:44 2023 - Sensor node 15 has opened a new connection
-46 - Wed Dec 27 01:49:44 2023 - Sensor node 21 reports it’s too warm
-Sensor node 15 reports it’s too cold
-47 - Wed Dec 27 01:49:44 2023 - Data insertion from sensor 21 succeeded
-Data insertion from sensor 15 succeeded
-48 - Wed Dec 27 01:49:44 2023 - Sensor node 37 has opened a new connection
-49 - Wed Dec 27 00 - Wed Dec 27 01:51:28 2023 - A new data.csv file has been created.
-1 - Wed Dec 27 01:51:31 2023 - Sensor node 15 has opened a new connection
-2 - Wed Dec 27 01:51:31 2023 - Sensor node 15 reports it’s too cold
-3 - Wed Dec 27 01:51:32 2023 - Sensor node 15 has opened a new connection
-4 - Wed Dec 27 01:51:32 2023 - Sensor node 15 reports it’s too cold
-5 - Wed Dec 27 01:51:32 2023 - Data insertion from sensor 15 succeeded
-Data insertion from sensor 15 succeeded
-6 - Wed Dec 27 01:51:33 2023 - Sensor node 21 has opened a new connection
-7 - Wed Dec 27 01:51:33 2023 - Sensor node 15 has opened a new connection
-8 - Wed Dec 27 01:51:33 2023 - Sensor node 21 reports it’s too cold
-Sensor node 15 reports it’s too cold
-9 - Wed Dec 27 01:51:33 2023 - Data insertion from sensor 21 succeeded
-10 - Wed Dec 27 01:51:33 2023 - Data insertion from sensor 15 succeeded
-11 - Wed Dec 27 01:51:34 2023 - Sensor node 15 has opened a new connection
-12 - Wed Dec 27 01:51:35 2023 - Sensor node 15 has opened a new connection
-13 - Wed Dec 27 01:51:35 2023 - Sensor node 15 reports it’s too cold
-Sensor node 15 reports it’s too warm
-14 - Wed Dec 27 01:51:35 2023 - Data insertion from sensor 15 succeeded
-15 - Wed Dec 27 01:51:35 2023 - Data insertion from sensor 15 succeeded
-16 - Wed Dec 27 01:51:35 2023 - Sensor node 37 has opened a new connection
-17 - Wed Dec 27 01:51:36 2023 - Sensor node 21 has opened a new connection
-18 - Wed Dec 27 01:51:36 2023 - Sensor node 37 reports it’s too cold
-Sensor node 21 reports it’s too warm
-Data insertion from sensor 37 succeeded
-19 - Wed Dec 27 01:51:36 2023 - Data insertion from sensor 21 succeeded
-20 - Wed Dec 27 01:51:36 2023 - Sensor node 15 has opened a new connection
-21 - Wed Dec 27 01:51:37 2023 - Sensor node 15 has opened a new connection
-22 - Wed Dec 27 01:51:37 2023 - Sensor node 15 reports it’s too warm
-Sensor node 15 reports it’s too warm
-Data insertion from sensor 15 succeeded
-Data insertion from sensor 15 succeeded
-23 - Wed Dec 27 01:51:37 2023 - Sensor node 37 has opened a new connection
-24 - Wed Dec 27 01:51:38 2023 - Sensor node 15 has opened a new connection
-25 - Wed Dec 27 01:51:38 2023 - Sensor node 37 reports it’s too warm
-Sensor node 15 reports it’s too warm
-Data insertion from sensor 37 succeeded
-Data insertion from sensor 15 succeeded
-26 - Wed Dec 27 01:51:39 2023 - Sensor node 21 has opened a new connection
-27 - Wed Dec 27 01:51:39 2023 - Sensor node 15 has opened a new connection
-28 - Wed Dec 27 01:51:39 2023 - Sensor node 21 reports it’s too warm
-Sensor node 15 reports it’s too warm
-Data insertion from sensor 21 succeeded
-29 - Wed Dec 27 01:51:39 2023 - Data insertion from sensor 15 succeeded
-30 - Wed Dec 27 01:51:39 2023 - Sensor node 37 has opened a new connection
-31 - Wed Dec 27 01:51:39 2023 - Sensor node 37 reports it’s too cold
-32 - Wed Dec 27 01:51:40 2023 - Sensor node 15 has opened a new connection
-Sensor node 15 reports it’s too warm
-33 - Wed Dec 27 01:51:40 2023 - Data insertion from sensor 37 succeeded
-34 - Wed Dec 27 01:51:40 2023 - Data insertion from sensor 15 succeeded
-35 - Wed Dec 27 01:51:41 2023 - Sensor node 37 has opened a new connection
-36 - Wed Dec 27 01:51:41 2023 - Sensor node 15 has opened a new connection
-37 - Wed Dec 27 01:51:41 2023 - Sensor node 37 reports it’s too cold
-Sensor node 15 reports it’s too warm
-Data insertion from sensor 37 succeeded
-38 - Wed Dec 27 01:51:41 2023 - Data insertion from sensor 15 succeeded
-39 - Wed Dec 27 01:51:42 2023 - Sensor node 21 has opened a new connection
-40 - Wed Dec 27 01:51:42 2023 - Sensor node 15 has opened a new connection
-41 - Wed Dec 27 01:51:42 2023 - Sensor node 21 reports it’s too cold
-42 - Wed Dec 27 01:51:42 2023 - Sensor node 15 reports it’s too warm
-43 - Wed Dec 27 01:51:42 2023 - Data insertion from sensor 21 succeeded
-Data insertion from sensor 15 succeeded
-44 - Wed Dec 27 01:51:43 2023 - Sensor node 37 has opened a new connection
-45 - Wed Dec 27 01:51:43 2023 - Sensor node 15 has opened a new connection
-46 - Wed Dec 27 01:51:43 2023 - Sensor node 37 reports it’s too warm
+40 - Thu Dec 28 22:21:55 2023 - Sensor node 15 has opened a new connection
+41 - Thu Dec 28 22:21:56 2023 - Sensor node 21 has opened a new connection
+Sensor node 15 has opened a new connection
+42 - Thu Dec 28 22:21:56 2023 - S

@@ -34,7 +34,7 @@
  *  \param fp_sensor_map file pointer to the map file
  *  \param fp_sensor_data file pointer to the binary data file
  */
-void datamgr_parse_room_sensor_map(FILE *fp_sensor_map);
+void datamgr_parse_room_sensor_map();
 
 
 

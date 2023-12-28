@@ -44,7 +44,8 @@ int element_compare(void *X, void *Y){
     }else return -1;
 }
 
-void datamgr_parse_room_sensor_map(FILE *fp_sensor_map) {
+void datamgr_parse_room_sensor_map() {
+    FILE *fp_sensor_map = fopen("room_sensor.map", "r");
     // checking if the file pointers are NULL
     if (fp_sensor_map == NULL) {
         fprintf(stderr, "Error because the file points to NULL\n");
@@ -75,6 +76,7 @@ void datamgr_parse_room_sensor_map(FILE *fp_sensor_map) {
     }
     //TODO: nog element free afh van insert_copy hierboven --> als true dan moet ik freeen anders niet
     //free(new_element)
+    fclose(fp_sensor_map);
 }
 
 sensor_value_t calculate_avg(sensor_value_t valueList[RUN_AVG_LENGTH]){
@@ -116,7 +118,6 @@ void *data_manager_thread() {
         int result = sbuffer_read(buffer, data);
         if(result != SBUFFER_NOT_YET_READ){
             if(result != SBUFFER_SUCCESS){
-                printf("!!!!!! hier geraakt !!!!!!!!!!!!\n");
                 fprintf(stderr, " Datamgr Error, in reading the buffer\n");
                 break; // while loop stops if end or error is hit
             }
@@ -126,7 +127,6 @@ void *data_manager_thread() {
                 char msg[55];
                 snprintf(msg, sizeof(msg), "Received end-of-stream marker with sensor ID %" PRIu16 "\n", data->id);
                 write_to_log_process(msg);
-                printf("!!!!!!!!!!!!!!!!!!!!!!!!!!! OEF GERAAKT EN NU IST GEDAAN !!!!!!!!!!!!!!!!!!!!!!!!");
                 break;
             }
 
