@@ -183,11 +183,7 @@ dplist_t *dpl_remove_at_index(dplist_t *list, int index, bool free_element) {
         if((*list).head != NULL){
             (*list).head->prev = NULL;
         }
-        if(free_element){
-            //TODO: herstel 4
-            //(*list).element_free((void **)(current_node->element));
-            //(*list).element_free((void **)(current_node->element));
-            printf("++++++++++++++++++++ bij head geraakt");
+        if(free_element && list->head != NULL){
             free(list->head->element);
         }
         free(current_node);
@@ -204,10 +200,6 @@ dplist_t *dpl_remove_at_index(dplist_t *list, int index, bool free_element) {
         node_to_delete->prev->next = NULL;
     }
     if (free_element && node_to_delete->element != NULL) {
-        //TODO: herstel
-        //list->element_free((void **)(node_to_delete->element));
-        //list->element_free((void **)(node_to_delete->element));
-        printf("++++++++++++++++++++ hier vast");
         free(node_to_delete->element);
     }
     free(node_to_delete);

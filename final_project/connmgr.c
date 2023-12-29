@@ -28,12 +28,9 @@ void *thread_runner(void *arg){
 
         if ((result == TCP_NO_ERROR) && bytes) {
             // log message writen
-            //TODO: echt herstellen
-            /*
             char msg[55];
             snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " has opened a new connection\n", data.id);
             write_to_log_process(msg);
-             */
 
             // inserting data in buffer
             sensor_data_t *new_data = malloc(sizeof(sensor_data_t));
@@ -112,8 +109,6 @@ void *start_connmgr(char *argv[]) {
         exit(EXIT_FAILURE);
     }
     free(data);
-    //pthread_exit(NULL);
-    //TODO END
-    printf("!!!!!!!!!!!!!! CONN EINDE\n");
+
     return 0;
 }

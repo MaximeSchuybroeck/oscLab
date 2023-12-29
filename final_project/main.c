@@ -19,7 +19,7 @@ sbuffer_t *buffer;
 //FILE *log_file;
 int log_pipe[2];
 int sequence_num = 0;
-//pthread_mutex_t log_mutex;
+pthread_mutex_t log_mutex;
 
 
 int write_to_log_process(char *msg){
@@ -54,6 +54,7 @@ int create_log_process(){
         int log_buffer[256];
         ssize_t result_bytes;
 
+
         while((result_bytes = read(log_pipe[0], log_buffer, sizeof(log_buffer)))){
             time_t current_time;
             time(&current_time);
@@ -61,6 +62,7 @@ int create_log_process(){
             date[strlen(date) - 1] = '\0';
             fprintf(log_file, "%d - %s - ", sequence_num, date);
             fwrite(log_buffer,1,result_bytes,log_file);
+            //fwrite(log_buffer,1,result_bytes,log_file);
             sequence_num++;
         }
 
@@ -122,10 +124,9 @@ int main(int argc, char *argv[]) {
     // freeing the buffer
     sbuffer_free(&buffer);
     // freeing the list
-    //TODO END
-    printf("!!!!!!!!!!!!!! hier geraakt\n");
     datamgr_free();
     // closing the logger process
     end_log_process();
-
+    //TODO END
+    printf("!!!!!!!!!!!!!! hier geraakt\n");
 }

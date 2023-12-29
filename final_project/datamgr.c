@@ -169,8 +169,6 @@ void *data_manager_thread() {
         }
     }
     free(data);
-    //TODO END
-    printf("!!!!!!!!!!!!!! DATA EINDE\n");
     return NULL;
 
 }

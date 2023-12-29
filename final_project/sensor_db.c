@@ -85,7 +85,5 @@ void* storage_manager_thread() {
 
     }
     free(data);
-    //TODO END
-    printf("!!!!!!!!!!!!!! STORAGE EINDE\n");
     return NULL;
 }
