@@ -75,7 +75,6 @@ void* storage_manager_thread() {
             // writing to the CSV file
             if(data->id == 0){
                 //end-of-stream marker reached
-                //TODO END
                 break;
             }
             insert_sensor(data->id, data->value, data->ts);

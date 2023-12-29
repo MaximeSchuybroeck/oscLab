@@ -21,14 +21,13 @@ int datamgr_parse_room_sensor_map() {
     FILE *fp_sensor_map = fopen("room_sensor.map", "r");
     // checking if the file pointers are NULL
     if (fp_sensor_map == NULL) {
-        //TODO END: printf
-        //fprintf(stderr, "Error because the file points to NULL\n");
-        printf("Error because the file points to NULL\n");
+        fprintf(stderr, "Error because the file points to NULL\n");
         return -1;
     }
 
     int room_id, sensor_id;
     int insert_index = 0;
+
     list = dpl_create();
 
     // reading from the sensor map file
@@ -89,9 +88,7 @@ void *data_manager_thread() {
         int result = sbuffer_read(buffer, data);
         if(result != SBUFFER_NOT_YET_READ){
             if(result != SBUFFER_SUCCESS){
-                //TODO END: printf
-                //fprintf(stderr, " Datamgr Error, in reading the buffer\n");
-                printf(" Datamgr Error, in reading the buffer\n");
+                fprintf(stderr, " Datamgr Error, in reading the buffer\n");
                 break; // while loop stops if end or error is hit
             }
 
@@ -103,14 +100,23 @@ void *data_manager_thread() {
             }
 
             // updating the dplist
+
             dplist_node_t *current_node = list->head;
             node_was_found = false;
-
             while(current_node != NULL){
                 if(current_node->element->sensorId == data->id){
                     current_node->element->ts = data->ts;
+
                     //adding value to the list with previous values
-                    current_node->element->previousValues[get_valuelist_size(current_node->element->previousValues)] = data->value;
+                    int size = get_valuelist_size(current_node->element->previousValues);
+                    if(size == RUN_AVG_LENGTH){
+                        for(int i = 0; i < RUN_AVG_LENGTH -2; i++){
+                            current_node->element->previousValues[i] = current_node->element->previousValues[i+1];
+                        }
+                        current_node->element->previousValues[size-1] = data->value;
+                    }else{
+                        current_node->element->previousValues[size] = data->value;
+                    }
 
                     node_was_found = true;
                     // writing the log message
@@ -130,9 +136,7 @@ void *data_manager_thread() {
 
             // checking if the node was found
             if(!node_was_found){
-                //TODO:
-                //fprintf(stderr, "Error, sensor %" PRIu16 " was not found in de dplist\n", data->id);
-                printf("Error, sensor %" PRIu16 " was not found in de dplist\n", data->id);
+                fprintf(stderr, "Error, sensor %" PRIu16 " was not found in de dplist\n", data->id);
             }
         }
     }

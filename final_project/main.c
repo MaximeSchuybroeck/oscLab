@@ -16,7 +16,6 @@
 
 // global variables
 sbuffer_t *buffer;
-//FILE *log_file;
 int log_pipe[2];
 int sequence_num = 0;
 pthread_mutex_t log_mutex;
@@ -24,6 +23,7 @@ pthread_mutex_t log_mutex;
 
 int write_to_log_process(char *msg){
     write(log_pipe[1], msg, strlen(msg));
+    sleep(1);
     return 0; // = success
 }
 
@@ -41,7 +41,7 @@ int create_log_process(){
         return -1;
     } else if(pid == 0){    // = child process
         // Closing the writing process
-        close(log_pipe[1]);
+        //close(log_pipe[1]);
 
         // opening the log_file
         FILE *log_file = fopen("gateway.log", "w");
@@ -63,6 +63,7 @@ int create_log_process(){
             date[strlen(date) - 1] = '\0';
             fprintf(log_file, "%d - %s - ", sequence_num, date);
             fwrite(log_buffer,1,result_bytes,log_file);
+            fflush(log_file);
             sequence_num++;
             pthread_mutex_unlock(&log_mutex);
         }

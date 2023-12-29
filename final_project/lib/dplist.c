@@ -37,11 +37,15 @@ dplist_t *dpl_insert_at_index(dplist_t *list, void *givenElement, int index) {
 
     if (list->head == NULL || index <= 0) {
         new_node->prev = NULL;
+        list->head = new_node;
+        /*
+        new_node->prev = NULL;
         new_node->next = list->head;
         if (list->head != NULL) {
             list->head->prev = new_node;
         }
         list->head = new_node;
+         */
     } else {
         dplist_node_t *node_at_index = dpl_get_reference_at_index(list, index);
         new_node->next = node_at_index->next;
