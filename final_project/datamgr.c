@@ -6,7 +6,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <inttypes.h>
-#include <assert.h>
 #include "datamgr.h"
 #include "sbuffer.h"
 #include <string.h>
@@ -28,7 +27,6 @@ void * element_copy(void *element){
 
 void element_free(void **element){
     free(*element);
-    *element = NULL;
 }
 
 int element_compare(void *X, void *Y){
@@ -44,17 +42,21 @@ int element_compare(void *X, void *Y){
     }else return -1;
 }
 
-void datamgr_parse_room_sensor_map() {
+int datamgr_parse_room_sensor_map() {
     FILE *fp_sensor_map = fopen("room_sensor.map", "r");
     // checking if the file pointers are NULL
     if (fp_sensor_map == NULL) {
-        fprintf(stderr, "Error because the file points to NULL\n");
-        return;
+        //TODO END: printf
+        //fprintf(stderr, "Error because the file points to NULL\n");
+        printf("Error because the file points to NULL\n");
+        return -1;
     }
 
     int room_id, sensor_id;
     int insert_index = 0;
+    //TODO: herstel 2
     list = dpl_create(element_free);
+    //list = dpl_create();
 
     // reading from the sensor map file
     while (fscanf(fp_sensor_map, "%d %d", &room_id, &sensor_id) == 2) {
@@ -77,6 +79,7 @@ void datamgr_parse_room_sensor_map() {
     //TODO: nog element free afh van insert_copy hierboven --> als true dan moet ik freeen anders niet
     //free(new_element)
     fclose(fp_sensor_map);
+    return 0;
 }
 
 sensor_value_t calculate_avg(sensor_value_t valueList[RUN_AVG_LENGTH]){
@@ -118,7 +121,9 @@ void *data_manager_thread() {
         int result = sbuffer_read(buffer, data);
         if(result != SBUFFER_NOT_YET_READ){
             if(result != SBUFFER_SUCCESS){
-                fprintf(stderr, " Datamgr Error, in reading the buffer\n");
+                //TODO END: printf
+                //fprintf(stderr, " Datamgr Error, in reading the buffer\n");
+                printf(" Datamgr Error, in reading the buffer\n");
                 break; // while loop stops if end or error is hit
             }
 
@@ -157,13 +162,15 @@ void *data_manager_thread() {
 
             // checking if the node was found
             if(!node_was_found){
-                //TODO: botst end-of-stream marker --> dus iet me doen of ni
-                fprintf(stderr, "Error, sensor %" PRIu16 " was not found in de dplist\n", data->id);
+                //TODO:
+                //fprintf(stderr, "Error, sensor %" PRIu16 " was not found in de dplist\n", data->id);
+                printf("Error, sensor %" PRIu16 " was not found in de dplist\n", data->id);
             }
         }
-        // sbuffer is nog niet compleet dus moet die even wachten
     }
     free(data);
+    //TODO END
+    printf("!!!!!!!!!!!!!! DATA EINDE\n");
     return NULL;
 
 }

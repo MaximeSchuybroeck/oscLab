@@ -28,9 +28,12 @@ void *thread_runner(void *arg){
 
         if ((result == TCP_NO_ERROR) && bytes) {
             // log message writen
+            //TODO: echt herstellen
+            /*
             char msg[55];
             snprintf(msg, sizeof(msg), "Sensor node %" PRIu16 " has opened a new connection\n", data.id);
             write_to_log_process(msg);
+             */
 
             // inserting data in buffer
             sensor_data_t *new_data = malloc(sizeof(sensor_data_t));
@@ -46,12 +49,13 @@ void *thread_runner(void *arg){
 
         }
     } while (result == TCP_NO_ERROR);
-    if (result == TCP_CONNECTION_CLOSED)
+    if (result == TCP_CONNECTION_CLOSED){
         printf("Peer has closed connection\n");
-    else
+    } else{
         printf("Error occured on connection to peer\n");
+    }
     tcp_close(&client);
-    pthread_exit(NULL);
+    //pthread_exit(NULL);
     return NULL;
 }
 
@@ -81,7 +85,7 @@ void *start_connmgr(char *argv[]) {
 
     // After last-created thread --> conn_counter = 3 --> while loop stops
     // so the server can shut down because all threads are created
-    if(conn_counter > MAX_CONN){
+    if(conn_counter == MAX_CONN){
         if (tcp_close(&server) != TCP_NO_ERROR) exit(EXIT_FAILURE);
         printf("Server is shutting down\n");
         char msg[55];
@@ -92,8 +96,9 @@ void *start_connmgr(char *argv[]) {
     // joining the threads
     conn_counter = 0;
     while(conn_counter < MAX_CONN){
-        conn_counter++;
         pthread_join(threads[conn_counter], NULL);
+        printf("----------------------- CONN join %d ----\n", conn_counter);
+        conn_counter++;
     }
 
     // end-of-stream marker
@@ -101,9 +106,14 @@ void *start_connmgr(char *argv[]) {
     data->id = 0;
     data->read_by_datamgr = false;
     if (sbuffer_insert(buffer, data) != SBUFFER_SUCCESS) {
-        fprintf(stderr, "Error in inserting the end-of-stream marker into the buffer\n");
+        //TODO END: wegnemen
+        //fprintf(stderr, "Error in inserting the end-of-stream marker into the buffer\n");
+        printf("Error in inserting the end-of-stream marker into the buffer\n");
         exit(EXIT_FAILURE);
     }
     free(data);
+    //pthread_exit(NULL);
+    //TODO END
+    printf("!!!!!!!!!!!!!! CONN EINDE\n");
     return 0;
 }

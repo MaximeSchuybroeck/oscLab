@@ -20,6 +20,16 @@ dplist_t *dpl_create() {
     list->head = NULL;
     return list;
 }
+//TODO: herstel 3
+dplist_t *dpl_create(// callback functions
+        void (*element_free)(void **element)
+) {
+    dplist_t *list = malloc(sizeof(struct dplist));
+    list->head = NULL;
+    //TODO: zien of dat dit niet weg moet
+    list->element_free = element_free;
+    return list;
+}
 */
 dplist_t *dpl_create(// callback functions
         void (*element_free)(void **element)
@@ -174,12 +184,15 @@ dplist_t *dpl_remove_at_index(dplist_t *list, int index, bool free_element) {
             (*list).head->prev = NULL;
         }
         if(free_element){
-            (*list).element_free((void **)(current_node->element));
+            //TODO: herstel 4
+            //(*list).element_free((void **)(current_node->element));
+            //(*list).element_free((void **)(current_node->element));
+            printf("++++++++++++++++++++ bij head geraakt");
+            free(list->head->element);
         }
         free(current_node);
         return list;
     }
-    //TODO: dpl_get_reference_at_index hier compatibel maken
     dplist_node_t *node_to_delete = dpl_get_reference_at_index(list, index);
     if (node_to_delete == NULL) {
         return list;
@@ -191,7 +204,11 @@ dplist_t *dpl_remove_at_index(dplist_t *list, int index, bool free_element) {
         node_to_delete->prev->next = NULL;
     }
     if (free_element && node_to_delete->element != NULL) {
-        list->element_free((void **)(node_to_delete->element));
+        //TODO: herstel
+        //list->element_free((void **)(node_to_delete->element));
+        //list->element_free((void **)(node_to_delete->element));
+        printf("++++++++++++++++++++ hier vast");
+        free(node_to_delete->element);
     }
     free(node_to_delete);
     return list;

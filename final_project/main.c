@@ -51,16 +51,16 @@ int create_log_process(){
         }
 
         //local variables
-        int buffer[256];
+        int log_buffer[256];
         ssize_t result_bytes;
 
-        while((result_bytes = read(log_pipe[0], buffer, sizeof(buffer)))){
+        while((result_bytes = read(log_pipe[0], log_buffer, sizeof(log_buffer)))){
             time_t current_time;
             time(&current_time);
             char *date = ctime(&current_time);
             date[strlen(date) - 1] = '\0';
             fprintf(log_file, "%d - %s - ", sequence_num, date);
-            fwrite(buffer,1,result_bytes,log_file);
+            fwrite(log_buffer,1,result_bytes,log_file);
             sequence_num++;
         }
 
@@ -122,7 +122,10 @@ int main(int argc, char *argv[]) {
     // freeing the buffer
     sbuffer_free(&buffer);
     // freeing the list
+    //TODO END
+    printf("!!!!!!!!!!!!!! hier geraakt\n");
     datamgr_free();
     // closing the logger process
     end_log_process();
+
 }

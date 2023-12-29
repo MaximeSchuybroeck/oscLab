@@ -30,9 +30,11 @@ struct dplist_node {
 
 struct dplist {
     dplist_node_t *head;
+
     void *(*element_copy)(void **src_element);
     void (*element_free)(void **element);
     int (*element_compare)(void *x, void *y);
+
 };
 /*
 struct dplist {
@@ -53,7 +55,8 @@ struct dplist {
  * \param element_compare callback function to compare two element elements; returns -1 if x<y, 0 if x==y, or 1 if x>y
  * \return a pointer to a newly-allocated and initialized list.
  */
-dplist_t *dpl_create();
+ //TODO: hetstelling
+dplist_t *dpl_create(void (*element_free)(void **element));
  /*
 dplist_t *dpl_create(
         void* (*element_copy)(void *element),

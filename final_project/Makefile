@@ -82,7 +82,13 @@ runclient3: sensor_node.c
 
 kill:
 	killall sensor_node
+
+killall:
+	killall sensor_node
 	sleep 10
+	killall sensor_gateway
+
+killgate:
 	killall sensor_gateway
 
 debug_val: sensor_gateway
