@@ -43,7 +43,7 @@ void *thread_runner(void *arg){
                 printf("sensor id = %" PRIu16 " - temperature = %g - timestamp = %ld\n", data.id, data.value,
                        (long int) data.ts);
             }
-
+            free(new_data);
         }
     } while (result == TCP_NO_ERROR);
     if (result == TCP_CONNECTION_CLOSED){
