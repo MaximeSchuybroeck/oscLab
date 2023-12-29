@@ -41,7 +41,7 @@ int create_log_process(){
         return -1;
     } else if(pid == 0){    // = child process
         // Closing the writing process
-        //close(log_pipe[1]);
+        close(log_pipe[1]);
 
         // opening the log_file
         FILE *log_file = fopen("gateway.log", "w");
@@ -56,14 +56,15 @@ int create_log_process(){
 
 
         while((result_bytes = read(log_pipe[0], log_buffer, sizeof(log_buffer)))){
+            pthread_mutex_lock(&log_mutex);
             time_t current_time;
             time(&current_time);
             char *date = ctime(&current_time);
             date[strlen(date) - 1] = '\0';
             fprintf(log_file, "%d - %s - ", sequence_num, date);
             fwrite(log_buffer,1,result_bytes,log_file);
-            //fwrite(log_buffer,1,result_bytes,log_file);
             sequence_num++;
+            pthread_mutex_unlock(&log_mutex);
         }
 
         // closing the log_file
@@ -127,6 +128,4 @@ int main(int argc, char *argv[]) {
     datamgr_free();
     // closing the logger process
     end_log_process();
-    //TODO END
-    printf("!!!!!!!!!!!!!! hier geraakt\n");
 }

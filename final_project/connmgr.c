@@ -49,10 +49,9 @@ void *thread_runner(void *arg){
     if (result == TCP_CONNECTION_CLOSED){
         printf("Peer has closed connection\n");
     } else{
-        printf("Error occured on connection to peer\n");
+        printf("Error occurred on connection to peer\n");
     }
     tcp_close(&client);
-    //pthread_exit(NULL);
     return NULL;
 }
 
@@ -94,7 +93,6 @@ void *start_connmgr(char *argv[]) {
     conn_counter = 0;
     while(conn_counter < MAX_CONN){
         pthread_join(threads[conn_counter], NULL);
-        printf("----------------------- CONN join %d ----\n", conn_counter);
         conn_counter++;
     }
 
@@ -103,9 +101,7 @@ void *start_connmgr(char *argv[]) {
     data->id = 0;
     data->read_by_datamgr = false;
     if (sbuffer_insert(buffer, data) != SBUFFER_SUCCESS) {
-        //TODO END: wegnemen
-        //fprintf(stderr, "Error in inserting the end-of-stream marker into the buffer\n");
-        printf("Error in inserting the end-of-stream marker into the buffer\n");
+        fprintf(stderr, "Error in inserting the end-of-stream marker into the buffer\n");
         exit(EXIT_FAILURE);
     }
     free(data);
